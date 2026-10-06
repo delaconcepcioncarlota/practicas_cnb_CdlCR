@@ -34,8 +34,8 @@ En primer lugar se ha comprobado que los datos exportados de Spectronaut corresp
 
 ```{r loading data MTA}
 
-tsv_original <- "./20260916_165940_20250307_PLC_MTA_Report.tsv"
-tsv_nadia <- "./MTA_Report_for_NADIA.tsv"
+tsv_original <- "../../../20260916_165940_20250307_PLC_MTA_Report.tsv"
+tsv_nadia <- "../../../MTA_Report_for_NADIA.tsv"
 
 datos_mta <- read.delim(tsv_original, stringsAsFactors = FALSE)
 
@@ -56,7 +56,7 @@ Se ha automatizado el proceso de selección de métodos de normalizacion e imput
 #| message: false
 
 source("./fun_norm_imp_methods.R")
-norm_imp_methods_MTA <- obtaining_norm_imp_methods(".","MTA_Report_for_NADIA.tsv", 
+norm_imp_methods_MTA <- obtaining_norm_imp_methods(".","../../../MTA_Report_for_NADIA.tsv", 
 c("h24_0MTA","h24_10MTA", "h24_50MTA", "h48_0MTA","h48_10MTA", "h48_50MTA"))
 
 
@@ -146,17 +146,17 @@ Las comparaciones establecidas permiten analizar el efecto de la droga a diferen
 #| results: hide
 #| message: false
 
-MTA_processed_data <- process_proteomics(norm_imp_methods_MTA$preproc_data,
-                        export_dir = "./proc_data",
-                        norm_method = norm_imp_methods_MTA$norm$Method[1],
-                        imp_method = "combo",
-                        mar_method = norm_imp_methods_MTA$imp$Method[1],
-                        mnar_method = norm_imp_methods_MTA$imp$Method[length(norm_imp_methods_MTA$imp$Method)],
-                        comparisons = c("h24_10MTA - h24_0MTA",
-                                        "h24_50MTA - h24_0MTA",
-                                        "h48_10MTA - h48_0MTA",
-                                        "h48_50MTA - h48_0MTA"
-                                        ))
+MTA_processed_data_auto <- process_proteomics(norm_imp_methods_MTA$preproc_data,
+                          export_dir = "./proc_data_auto_best_method",
+                          norm_method = norm_imp_methods_MTA$norm$Method[1],
+                          imp_method = "combo",
+                          mar_method = norm_imp_methods_MTA$imp$Method[1],
+                          mnar_method = norm_imp_methods_MTA$imp$Method[length(norm_imp_methods_MTA$imp$Method)],
+                          comparisons = c("h24_10MTA - h24_0MTA",
+                                          "h24_50MTA - h24_0MTA",
+                                          "h48_10MTA - h48_0MTA",
+                                          "h48_50MTA - h48_0MTA"
+                                          ))
 
 ```
 
@@ -166,7 +166,7 @@ MTA_processed_data <- process_proteomics(norm_imp_methods_MTA$preproc_data,
 ```{r}
 
 volcano_24h_10mta <- volcano_highchart_list(
-  MTA_processed_data$DEPs_results,
+  MTA_processed_data_auto$DEPs_results,
   comparisons = "h24_10MTA - h24_0MTA",
   lfc_thr=0.2,
   show_top_genes = 10,
@@ -180,7 +180,7 @@ volcano_24h_10mta$"h24_10MTA - h24_0MTA"
 ```{r}
 
 volcano_24h_50mta <- volcano_highchart_list(
-  MTA_processed_data$DEPs_results,
+  MTA_processed_data_auto$DEPs_results,
   comparisons = "h24_50MTA - h24_0MTA",
   lfc_thr=0.2,
   show_top_genes = 10,
@@ -196,7 +196,7 @@ volcano_24h_50mta$"h24_50MTA - h24_0MTA"
 ```{r}
 
 volcano_48h_10mta <- volcano_highchart_list(
-  MTA_processed_data$DEPs_results,
+  MTA_processed_data_auto$DEPs_results,
   comparisons = "h48_10MTA - h48_0MTA",
   lfc_thr=0.2,
   show_top_genes = 10,
@@ -210,7 +210,7 @@ volcano_48h_10mta$"h48_10MTA - h48_0MTA"
 ```{r}
 
 volcano_48h_50mta <- volcano_highchart_list(
-  MTA_processed_data$DEPs_results,
+  MTA_processed_data_auto$DEPs_results,
   comparisons = "h48_50MTA - h48_0MTA",
   lfc_thr=0.2,
   show_top_genes = 10,
@@ -224,8 +224,8 @@ volcano_48h_50mta$"h48_50MTA - h48_0MTA"
 ### PCA
 
 ```{r}
-scores_PCA_MTA <- build_pca_scores(
-                            MTA_processed_data$PCA_Input,
+scores_PCA_MTA_auto <- build_pca_scores(
+                            MTA_processed_data_auto$PCA_Input,
                             mode = c("all", "any", "specific"),
                             alpha = 0.05,
                             comparison = NULL,
@@ -236,8 +236,8 @@ scores_PCA_MTA <- build_pca_scores(
                             cond_col = "Condition"
                           )
 
-pca_MTA <- pca_highchart(
-                scores_PCA_MTA,
+pca_MTA_auto <- pca_highchart(
+                scores_PCA_MTA_auto,
                 group_order = c("h24_0MTA","h24_10MTA", "h24_50MTA", "h48_0MTA","h48_10MTA", "h48_50MTA"),
                 title = "PCA for MTA samples",
                 addEllipses = TRUE,
@@ -247,15 +247,15 @@ pca_MTA <- pca_highchart(
                 label_size = 10
               )
 
-pca_MTA
+pca_MTA_auto
 ```
 
 
 ```{r}
 set.seed(42)
 
-boxplots_MTA <- boxplot_highchart_list(
-  MTA_processed_data$BoxPlot_Input,
+boxplots_MTA_auto <- boxplot_highchart_list(
+  MTA_processed_data_auto$BoxPlot_Input,
   assays = "bpca_zero",
   color_by = "Condition",
   group_order = c("h24_0MTA","h24_10MTA", "h24_50MTA", "h48_0MTA","h48_10MTA", "h48_50MTA"),
@@ -266,7 +266,7 @@ boxplots_MTA <- boxplot_highchart_list(
   height = 560
 )
 
-boxplots_MTA$bpca_zero
+boxplots_MTA_auto$bpca_zero
 ```
 
 
@@ -274,10 +274,10 @@ boxplots_MTA$bpca_zero
 #| fig-width: 12
 #| fig-height: 15
 proteomics_heatmap(
-  MTA_processed_data$PCA_Input,
+  MTA_processed_data_auto$PCA_Input,
   mode = "target",
   comparison = "h24_50MTA - h24_0MTA",
-  feature_ids = MTA_processed_data$PCA_Input$FeatureID,
+  feature_ids = MTA_processed_data_auto$PCA_Input$FeatureID,
   scale_data = "row",
   sample_order = "clustering",
   cluster_rows = TRUE,
@@ -294,7 +294,7 @@ proteomics_heatmap(
 
 ```{r results_widget}
 results_list_widget(
-  MTA_processed_data$DEPs_results,
+  MTA_processed_data_auto$DEPs_results,
   protein_quant = norm_imp_methods_MTA$preproc_data$protein_quant)
 ```
 
@@ -304,8 +304,8 @@ results_list_widget(
 #| results: hide
 #| message: false
 
-pattern_profile_MTA_any <- pattern_profiler_analysis(se_proc = MTA_processed_data$se_proc,
-                                             DEPs_results = MTA_processed_data$DEPs_results,
+pattern_profile_MTA_any <- pattern_profiler_analysis(se_proc = MTA_processed_data_auto$se_proc,
+                                             DEPs_results = MTA_processed_data_auto$DEPs_results,
                                              assay_name = "bpca_zero",
                                              filter_mode = "any",
                                              #Con todas las comparaciones y any si que funciona
