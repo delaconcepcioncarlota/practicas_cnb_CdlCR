@@ -1,0 +1,77 @@
+---
+title: "Análisis de los métodos de imputacion de valores normalizando con cycloess"
+author: "Carlota de la Concepción Ruiz"
+format: pdf
+editor: source
+---
+
+La imputación de datos es necesaria para evitar la pérdida de información y realizar un análisis estadístico más realista.
+
+Dado que la deteccion de proteinas depende tanto de la muestra como de la sensibilidad del equipo de análisis, pueden aparecer datos como ausentes que realmente no lo son. Cuando esto ocurre, se dice que aparecen valores faltantes y se determinan como *NA* (En algunos casos, la máquina indica un valor cero que se controla en el paso de preprocesamiento de los datos crudos sustituyendo el cero por un *NA*).
+
+Un valor puede ser ausente por dos motivos diferentes, aparecer a valores inferiores al límite de detección o por fallos de detección. Así, se determinan dos tipos de NAs: - MARs (Missing At Random): estos son los valores ausentes a causa de fallos en la detección. Un valor faltante en una replica de una condición en la que aparece en todas las réplicas menos una (umbral a determinar por el investigador) suele ser un valor ausente debido a un fallo en la detección. - MNAR (Missing Not At Random): valores ausentes debido a un nivel de abundancia muy bajo que es incapaz de detectar el equipo. Así, en este caso, no suelen aparecer valores de cuantificacion para ninguna de las replicas de una misma condición (pero si aparece en otras condiciones).
+
+Dado que a naturaleza de los valores ausentes no siempre es la misma, el manejo e imputación de valores no conviene hacerla de la misma manera. Poder seleccionar el mejor método de imputación de datos para cada tipo de valor ausente, es el objetivo de dicho paquete.
+
+*FIX ME con la MP NB*
+
+### Preparación de los datos
+
+```{r preparing imp}
+imp_se_cycloess <- im_prepare_se(
+    preproc_data_spikein,
+    norm_method = "cycloess",
+    verbose = FALSE)
+```
+
+### Obtencion de valores métricos para la selección del método de imputación
+
+Se selecciona pattern = "from_data" con el objetivo de que la distribución que usada para evaluar las métricas sea lo más parecida a la real.
+
+```{r imputation metrics, results = "hide"}
+im_metr_cycloess <- imputation_metrics(
+    imp_se_cycloess,
+    assay_name = "cycloess",
+    pattern = "from_data",
+    output_dir = "./imputation_metrics_cycloess",
+    verbose = FALSE)
+```
+
+### Análisis de las métricas para selección del métodos de imputación
+
+Al igual que en los métodos de normalización, los métodos de imputacion cuentan con unas métricas para su evaluación. Así, de la misma manera se rankean los diferentes métodos con valores del 1 al número de métodos evaluados y promedia la posición.
+
+NO APARECEN: - with -\> podria poner una media global para imputar? no tiene mucho sentido pero por ver lo que sale y comprobar que la puntuacion que sale es mala (o deberia serlo) - softhybrid -\> - none -\> no imputar no puede tener métrica de evaluacion
+
+|   **Método**   | **NRMSE Rank** | **SOR Rank** | **PSS Rank** | **ACC OI Rank** | **Rank Mean** |
+|:----------|:----------:|:--------:|:--------:|:-----------:|:---------:|
+|    bpca    |     1      |    2     |    2     |      1      |   1.50    |
+| missForest |     2      |    4     |    1     |      2      |   2.25    |
+|   Impseq   |     3      |    3     |    4     |      3      |   3.25    |
+| Impseqrob  |     4      |    1     |    6     |      4      |   3.75    |
+|   nbavg    |     6      |    5     |    3     |      6      |   5.00    |
+|    mice    |     5      |    8     |    7     |      5      |   6.25    |
+|    knn     |     8      |    6     |    5     |      8      |   6.75    |
+|   limpa    |     7      |    7     |    8     |      7      |   7.25    |
+|    MLE     |     9      |    9     |    9     |      9      |   9.00    |
+|     PI     |     10     |    10    |    10    |     12      |   10.50   |
+|   MinDet   |     11     |    11    |    13    |     11      |   11.50   |
+|   QRILC    |     13     |    13    |    11    |     10      |   11.75   |
+|  MinProb   |     12     |    12    |    12    |     13      |   12.25   |
+|    zero    |     14     |    14    |    14    |     NA      |   14.00   |
+|    min     |     15     |    15    |    15    |     NA      |   15.00   |
+|  halfmin   |     16     |    16    |    16    |     NA      |   16.00   |
+
+: Tabla de métricas de imputación de valores cuando la normalización se lleva a cabo mediante *cycloess*. {#tbl-imp-metrics-spikein-cycloess}
+
+```{r metrics graph imp, fig.width = 10, fig.height = 10}
+im_metr_cycloess$metrics
+```
+
+```{r ranking opdea imp, fig.width = 12, fig.height = 10}
+im_metr_cycloess$ranking
+```
+
+La imagen superior muestra que el mejor método de imputación de datos es *Impseq*, además de ser confirmado por tener el menor RankMean, en tres de las cuatro métricas tiene un valor de uno, es decir, tiene el valor más optimo de entre todos los métodos de imputación (@tbl-imp-metrics-spikein-cycloess).
+
+QUe sea una muestra sintética hace que haya menos variabilidad biológica . El problema de estos datos es que cada réplica es igual, aunque se han procesado de maenra independiente, la muestra en si es igual. 
