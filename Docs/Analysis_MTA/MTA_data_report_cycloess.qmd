@@ -30,8 +30,8 @@ library(NADIA)
 #| echo: false
 #| message: false
 
-tsv_original <- "./20260916_165940_20250307_PLC_MTA_Report.tsv"
-tsv_nadia <- "./MTA_Report_for_NADIA.tsv"
+tsv_original <- "../../../20260916_165940_20250307_PLC_MTA_Report.tsv"
+tsv_nadia <- "../../../MTA_Report_for_NADIA.tsv"
 
 datos_mta <- read.delim(tsv_original, stringsAsFactors = FALSE)
 
@@ -54,7 +54,7 @@ Tras la normalización según el método cycloess, se procede a analizar cual es
 #| message: false
 #| warning: false
 
-preprocessed_data_MTA <- preprocess_spectronaut("./MTA_Report_for_NADIA.tsv", 
+preprocessed_data_MTA <- preprocess_spectronaut("../../../MTA_Report_for_NADIA.tsv", 
                                             condition_order = c("h24_0MTA","h24_10MTA", "h24_50MTA", "h48_0MTA","h48_10MTA", "h48_50MTA"), 
                                             verbose = FALSE)
   
