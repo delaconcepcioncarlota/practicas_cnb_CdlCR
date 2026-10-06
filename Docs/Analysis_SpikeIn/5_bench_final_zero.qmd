@@ -26,7 +26,7 @@ expected_change <- data.frame(
     Species        = rep(c("ECOLI", "YEAST"), times = 6),
     expected_logFC = expected_log2FC)
 
-spikein_data <- read.csv("../Report_Species.tsv", sep = "/t")
+spikein_data <- read.csv(".../Report_Species.tsv", sep = "/t")
 
 
 species_pg_df <- data.frame(Protein.IDs = spikein_data$PG.ProteinGroups,

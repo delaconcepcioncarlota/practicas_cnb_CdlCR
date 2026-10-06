@@ -42,7 +42,7 @@ DUDA: si tengo un número de DE menor porque se hayan filtrado o no se hayan det
 
 ```{r protein association cycloess}
 
-spikein_data <- read.csv("Report_Species.tsv", sep="\t")
+spikein_data <- read.csv(".../Report_Species.tsv", sep="\t")
 
 
 species_pg_df <- data.frame(Protein.IDs = spikein_data$PG.ProteinGroups,
