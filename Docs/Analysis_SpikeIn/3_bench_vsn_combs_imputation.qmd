@@ -38,7 +38,7 @@ expected_change <- data.frame(
 La asociación de proteinas a especies permite ver como se distribuyen los resultados. Se espera que los verdaderos negativos pertenezcan a proteinas humanas mientras que los verdaderos positivos pertenezcan a proteinas de *E. coli* o *S. cerevisiae*
 
 ```{r protein association vsn}
-spikein_data <- read.csv(".../Report_Species.tsv", sep="\t")
+spikein_data <- read.csv("../../../Report_Species.tsv", sep="\t")
 
 
 species_pg_df <- data.frame(Protein.IDs = spikein_data$PG.ProteinGroups,

@@ -39,7 +39,7 @@ expected_change <- data.frame(
 
 ```{r}
 
-spikein_data <- read.csv(".../Report_Species.tsv", sep="\t")
+spikein_data <- read.csv("../../../Report_Species.tsv", sep="\t")
 
 
 species_pg_df <- data.frame(Protein.IDs = spikein_data$PG.ProteinGroups,
