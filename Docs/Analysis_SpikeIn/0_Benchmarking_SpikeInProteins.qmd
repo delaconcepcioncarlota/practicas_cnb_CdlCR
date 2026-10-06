@@ -63,10 +63,11 @@ Cuando se cuenta con proteínas spike-in o se conoce el resultado, ese análisis
 
 ```{r loading data, results = "hide"}
 library(NADIA)
-preproc_data_spikein <- preprocess_spectronaut("Benchmarking_data.tsv", 
-                                       condition_order = c("A", "B", "C", "D"), 
-                                       verbose = FALSE)
-```
+preproc_data_spikein <- preprocess_spectronaut
+  ("./tfm_cdlcr/Benchmarking_data.tsv", 
+  condition_order = c("A", "B", "C", "D"), 
+  verbose = FALSE)
+  ```
 
 ## Selección del método de normalización
 
