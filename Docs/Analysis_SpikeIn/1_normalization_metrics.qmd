@@ -1,0 +1,85 @@
+---
+title: "Benchmarking Multiple normalization"
+author: "Carlota de la Concepción Ruiz"
+format: html
+editor: source
+---
+
+```{r loading NADIA library 1_norm}
+#| results: hide
+#| message: false
+library(NADIA)
+```
+
+Dado que NADIA cuenta con 12 métodos de normalización, se van a evaluar las diferentes opciones según las métricas seleccionadas por el desarrollador con el objetivo de seleccionar la mejor para nuestros datos. Algunos de estos métodos de normalizacion son GlobalMedian, GlobalMEan, eqmdeians, medianNorm, meanNorm, vsn y quantile.
+
+Para analizar el efecto de la normalización frente a la no normalización, se debería incluir el método denominado log2Norm, que hace referencia a la no normalizacion como se indica en la guia del paquete. Esto no es posible dado que las abundancias sin normalizar no están centradas en zero por lo que la comparación no es realista (se podría realizar reajustando la centralidad de los datos a través de un volcano plot). 
+
+### Obtencion de valores métricos para la selección del método de normalización
+
+Con el objetivo de poder evaluar de manera manual cuales son los mejores métodos de normalizacion, se han desarrollado varias funciones: - La funcion *nm_prepare_se* extrae de los metadatos y los datos de anotacion de proteinas necesarios para generar la matriz filtrada, sustituye los ceros por NA y genera los objetos SE crudo y con los datos normalizados por log2. - La funcion *normalization_metrics* genera un ranking tras evaluar los diferentes métodos de normalizacion por los parámetros determinados: - Rank_PCV: Evalúa el coeficiente de variacion para cada proteina en cada concidion - Rank_PMAD - Rank_PEV: - Rank_Cor: - Rank_Sep Así genera un Rank_final con la media de todas las posiciones. Dado que en funcion del la métrica el valor optimo tiene que tomar un valor mayor o menor, se ha estabelcido que el mejor método, tomará el valor de uno (en el caso de Rank_PCV, tomará el valor de 1 el método que de el menor valor para PCV mientras que en el caso de Rank_Cor, tomará el valor de 1 el método que obtenga el mayor valor para Cor). Así, al promediar el valor final, se obtiene que el valor con Rank_final, será el más optimo dado que ha sifo el que ha obtenido menores valores para las diferentes métricas.
+
+```{r normalization methods}
+#| results: hide
+
+norm_se<- nm_prepare_se(preproc_data_spikein, verbose = FALSE)
+norm_metrics <- normalization_metrics(
+    norm_se,
+    methods = "all",
+    output_dir = "./step_by_step/normalization_metrics",
+    verbose = FALSE)
+```
+
+|     **Método**      | **Rank PCV** | **Rank PMAD** | **Rank PEV** | **Rank Cor** | **Rank Sep** | **Rank Final** |
+|:---------------|:--------:|:---------:|:--------:|:--------:|:--------:|:----------:|
+|    cycloess     |    9     |     1     |    1     |    2     |    4     |    3.4     |
+|       vsn       |    1     |     3     |    2     |    1     |    11    |    3.6     |
+|       Rlr       |    3     |     2     |    3     |    10    |    3     |    4.2     |
+|   GlobalMean    |    6     |     6     |    4     |    6     |    1     |    4.6     |
+|  GlobalMedian   |    10    |     7     |    5     |    5     |    2     |    5.8     |
+|    meanNorm     |    5     |     5     |    6     |    9     |    5     |    6.0     |
+|    eqmedians    |    2     |     8     |    7     |    7     |    7     |    6.2     |
+|    quantile     |    7     |     4     |    9     |    3     |    8     |    6.2     |
+|   medianNorm    |    4     |     9     |    8     |    8     |    6     |    7.0     |
+| quantile.robust |    8     |    10     |    11    |    12    |    9     |    10.0    |
+|      log2       |    12    |    12     |    12    |    4     |    12    |    10.4    |
+|       MAD       |    11    |    11     |    10    |    11    |    10    |    10.6    |
+
+: Evaluación final de los métodos de normalización {#tbl-norm-metrics-spikein}
+
+En la tabla superior se puede observar lo indicado anteriormente, cada métrica cuenta con una columna donde del 1 al valor del número de métricas que se evaluen, se les establece una posicion. Así, el numero más bajo indica un método de normalización más adecuado para dichos datos. Finalmente, el promedio de las puntuaciones establecidas se observa en la última columna bajo el nombre de Rank final como se ha indicado anteirormente. Para estos datos, parece que los mejores métodos de normalización son cycloess y vsn.
+
+### Análisis de las métricas para selección del método de normalizacion
+
+De una manera más visual, podemos analizar la bondad de los diferentes métodos de normalizacion mediante gráficas
+
+FIX ME : PONER ESTO, QUE NO SE VE NADA!!!
+
+```{r}
+norm_metrics$pcv
+```
+
+```{r}
+norm_metrics$pmad 
+#norm_metrics$correlation
+```
+
+```{r ranking final norm}
+norm_metrics$final_ranking
+```
+
+Al igual que en la tabla, la gráfica muestra que para este caso, el mejor método de normalizacion es *cycloess* dado que es el que menor valor medio ha obtenido. A este le sigue vsn. Se pueden observar tres tendencias. En primer lugar, cycloess, vsn, Rlr y GLobalMean cuentan con una media cercana al 4. En el caso de los métodos GlobalMedian, meanNorm,eqmedians y quantile, el promedio se encuenta cercano al 6. Dado que contamos con 12 métricas, FIXME -\> se encuentran en una poscion central, no son los más adecuados pero no son los peores. El método medianNorm tiene una valoración final de 7 indicando así que tampoco es un método adecuado a utilizar. Finalmente, los métodos quantile.robust, log2 y MAD tienen un promedio elevado que indica que utilizar dichos métodos de normalización no es optimo.
+
+```{r pca norm, fig.width = 8, fig.height = 12}
+norm_metrics$pca
+```
+
+Con el análisis del PCA se busca analizar cuanta varianza se explica con menos componentes. El las diferentes gráficas se observa la varianza explicada con PC1 y PC2. En el caso de clycloess, el método obtenido como optimo para la normalizacion de este tipo de datos, el PC1 explica un 70.9% de la varianza del conjunto de proteinas.
+
+Si se analizan la variabilidad explicada por el PC1 de las demás gráicas y se ordenan en función de ello, obtenemos un orden similar al obtenido en la tabla y en la gráfica. cycloess en todos los casos es el mejor método y log 2 el menos óptimo, no normalizar no genera beneficio.
+
+```{r pc1 norm ranking}
+norm_metrics$pc1_ranking
+```
+
+Debido a los valores métricos para los métodos de normalización, se optará por analizar cual es el mejor método de imputación de valores MAR para los tres métodos que, según la metríca utilizada, son los más apropiados. Así, se procederá a analizar las mejores métricas de imputaciones de valores MAR para cycloess, Rlr y vsn como métodos de normalización.
