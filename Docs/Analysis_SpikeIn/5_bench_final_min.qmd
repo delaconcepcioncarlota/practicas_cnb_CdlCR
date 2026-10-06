@@ -1,0 +1,394 @@
+---
+title: "5_bench_final_min"
+author: "Carlota de la Concepción Ruiz"
+format: pdf
+editor: source
+---
+
+## Carga de datos y filtrado inicial
+
+```{r}
+library(NADIA)
+preproc_data_spikein <- preprocess_spectronaut("../Benchmarking_data.tsv", condition_order = c("A", "B", "C", "D"), verbose = FALSE)
+```
+
+## Valores esperados
+
+```{r}
+expected_log2FC <- round(c(#B-A
+                    log2(10/5),log2(10/15),
+                    #C-A
+                    log2(15/5),log2(5/15), 
+                    #D-A
+                    log2(20/5),log2(1/15),
+                    #C-B
+                    log2(15/10),log2(5/10),
+                    #D-B
+                    log2(20/10),log2(1/10),
+                    #D-c
+                    log2(20/15), log2(1/5)
+                    ),2)
+
+expected_change <- data.frame(
+    Comparison     = rep(c("B-A", "C-A", "D-A", "C-B", "D-B", "D-C"), each = 2),
+    Species        = rep(c("ECOLI", "YEAST"), times = 6),
+    expected_logFC = expected_log2FC)
+```
+
+## Asociacion de proteinas a especias
+
+```{r}
+
+spikein_data <- read.csv("../Report_Species.tsv", sep="\t")
+
+
+species_pg_df <- data.frame(Protein.IDs = spikein_data$PG.ProteinGroups,
+                            Species = spikein_data$PG.OrganismId)
+
+```
+
+## Imputaciones a testar
+
+Se establecen *vsn* y vsn como los métodos de normalizacion óptimos dados los resultados en el benchmarking de la propia normalización
+
+```{r}
+combinations_final_min <- list(
+
+  #Final
+  list(norm_meth = "cycloess", imp_meth = "combo", mar_meth = "Impseq", mnar_meth = "min"),
+
+  list(norm_meth = "vsn", imp_meth = "combo", mar_meth = "Impseq", mnar_meth = "min"),
+
+  list(norm_meth = "Rlr", imp_meth = "combo", mar_meth = "Impseq", mnar_meth = "min")
+  
+  )
+```
+
+## Funcion de nombrar
+
+```{r}
+
+making_names <- function(combin){
+  if(combin$imp_meth ==  "combo"){
+    paste(combin$norm_meth, combin$mar_meth, combin$mnar_meth, sep="_")
+  }
+  #Non imputation
+  else if(combin$imp_meth == "none"){
+    paste(combin$norm_meth, "none", sep="_")
+  }
+  # SoftHybrid method
+  else if(combin$imp_meth == "softHybrid"){
+    paste(combin$norm_meth, "softHybrid", combin$mar_meth, combin$mnar_meth, sep="_")
+  }
+  #limpa method
+  else if(combin$imp_meth == "limpa"){
+    paste(combin$norm_meth, combin$imp_meth, sep = "_")
+  }
+  else {
+    paste(combin$norm_meth, combin$imp_meth, sep="_")
+  } 
+}
+
+```
+
+## Bucle de processing con benchmarking unico
+
+```{r}
+
+bm_final_min_list <- list()
+
+OpDEA_final_min_list <- list()
+  
+confusion_final_min_list <- list()
+
+classif_final_min_list <- list()
+
+for (comb in combinations_final_min){
+
+  name <- making_names(comb)
+  
+  pp_result <- process_proteomics(preproc_data_spikein,
+                     norm_method = comb$norm_meth,
+                     imp_method = comb$imp_meth,
+                     mar_method = comb$mar_meth,
+                     mnar_method = comb$mnar_meth,
+                     de_method = comb$de_method,
+                     verbose = FALSE)
+  
+  bm_result <- benchmarking_proteomics(pp_result$DEPs_results,
+                          expected_values = expected_change,
+                          species_df = species_pg_df, 
+                          output_dir = "C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_final_min/bm_final_min_single",
+                          verbose = FALSE)
+  
+  #Salvado de datos para cada bm
+  OpDEA <- bm_result$opdea_metrics
+  OpDEA$Assay <- name 
+  OpDEA_final_min_list[[name]] <- OpDEA
+  
+  confusion <- bm_result$confusion_overall
+  confusion$Assay <- name 
+  confusion_final_min_list[[name]] <- confusion
+
+  bm_w_imput <- bm_result$metrics_table
+  bm_w_imput$Assay <- name 
+  bm_final_min_list[[name]] <- bm_w_imput
+  
+  classif <- bm_result$classified_df
+  classif$Assay <- name 
+  classif_final_min_list[[name]] <- classif
+
+}
+
+all_OpDEA_final_min <- do.call(rbind, OpDEA_final_min_list)
+all_confusion_final_min <- do.call(rbind, confusion_final_min_list)
+all_metrics_bm_final_min <- do.call(rbind, bm_final_min_list)
+all_classif_final_min <- do.call(rbind, classif_final_min_list)
+
+```
+
+## Benchmarking multiple
+
+```{r}
+
+bm_multi_results_final_min <- benchmarking_multiple(
+  opdea_combined = all_OpDEA_final_min,
+  confusion_combined = all_confusion_final_min,
+  classified_combined = all_classif_final_min,
+  bench_metrics_combined = all_metrics_bm_final_min,
+  output_dir = "C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_final_min/bm_final_min_multi",
+  verbose = FALSE
+)
+
+```
+
+## Gráficos y comparaciones
+
+```{r}
+bm_multi_results_final_min$gg_ranking_bars_mean
+```
+
+Según la gráfica superior, donde se muestra la posición según las métricas OpDEA, al igual que en la @fig-ext-rank-bars, el mejor método de imputación de valores cuando la normalización se realiza mediante final_min, es la combinación de bpca y min. El método bpca se usa para imputar valores en los valores ausentes aleatorios mientras que el método min se utiliza en los valores ausentes no aleatorios.
+
+## FIX
+
+![Gráfico de barras de las métricas](%22C:\Users\Proteomica\Documents\tfm_cdlcr\Benchmarking_norm_w_imput\Benchmarking_norm_w_imput_res\bm_multiple_extended_ranking_bars.png%22){#fig-ext-rank-bars}
+
+```{r}
+bm_multi_results_final_min$extended_ranking
+```
+
+Al analizar las curvas ROC para cada comparación, el método de imputacion para valores ausentes aleatorios bpca tambien tiende a tomar las posiciones más altas alternando el método de imputacion de valores ausentes no aleatorios entre min y halfmin. Dependiendo de la diferencia real entre las muestras (@fig-ROC-comp-DC).
+
+## FIX
+
+\`![Curva ROC de la comparación D-C cuando se modifica el método de imputación de valores](%22C:\Users\Proteomica\Documents\tfm_cdlcr\Benchmarking_norm_w_imput\Benchmarking_norm_w_imput_res\by_comparison\bm_roc_zoom_D-C.png%22){#fig-ROC-comp-DC}
+
+```{r}
+bm_multi_results_final_min$gg_roc_zoom_by_comp
+```
+
+El método de imputación Impseq para los valores ausentes aleatorios combinado con el método de imputacion min para valores ausentes no aleatorios tambien toma posiciones altas cuando la diferencia entre muestras es más notoria. Especialmente, cuando la muestra D no se está comparando. Esto indica que la combinación del método Impseq y min, no es tan capaz de controlar los falsos negativos como la combinación del método bpca junto con min o halfmin. Esto se puede observar en los gráficos siguientes.
+
+```{r}
+
+bm_multi_results_final_min$gg_confusion_stacked_by_comp$`C-A`
+
+bm_multi_results_final_min$gg_confusion_stacked_by_comp$`D-C`
+```
+
+QUe sea una muestra sintética hace que haya menos variabilidad biológica . El problema de estos datos es que cada réplica es igual, aunque se han procesado de maenra independiente, la muestra en si es igual.
+
+```{r}
+bm_multi_results_final_min$gg_confusion_stacked
+```
+
+Como se observa en la gráfica superior, el método de normalización de cycloess introduce un numero menor de falsos positivos, lo que se verá representado en el número de proteinas siginificativas detectadas entre los diferentes métodos de normalización.
+
+```{r}
+
+pp_cycloess_Impseq_min <- process_proteomics(preproc_data_spikein,
+                                       norm_method = "cycloess",
+                                       imp_method = "combo",
+                                       mar_method = "Impseq",
+                                       mnar_method = "min",
+                                       verbose = FALSE)
+
+pp_vsn_Impseq_min <- process_proteomics(preproc_data_spikein,
+                                       norm_method = "vsn",
+                                       imp_method = "combo",
+                                       mar_method = "Impseq",
+                                       mnar_method = "min",
+                                       verbose = FALSE)
+
+pp_Rlr_Impseq_min <- process_proteomics(preproc_data_spikein,
+                                       norm_method = "Rlr",
+                                       imp_method = "combo",
+                                       mar_method = "Impseq",
+                                       mnar_method = "min",
+                                       verbose = FALSE)
+
+lista_proteinas <- list(
+  "cycloess_Impseq_min"   = pp_cycloess_Impseq_min$PCA_Input$FeatureID[pp_cycloess_Impseq_min$PCA_Input$sig_any],
+  "vsn_Impseq_min"     = pp_vsn_Impseq_min$PCA_Input$FeatureID[pp_vsn_Impseq_min$PCA_Input$sig_any],
+  "Rlr_Impseq_min" = pp_Rlr_Impseq_min$PCA_Input$FeatureID[pp_Rlr_Impseq_min$PCA_Input$sig_any]
+)
+
+for (nombre in names(lista_proteinas)) {
+  
+  proteinas <- lista_proteinas[[nombre]]
+  
+  df_exportar <- data.frame(FeatureID = proteinas, stringsAsFactors = FALSE)
+  
+  nombre_archivo <- paste0("Reporte_", nombre, ".csv")
+  
+  write.csv2(df_exportar, file = nombre_archivo, row.names = FALSE)
+}
+
+df_cycloess_Impseq_min <- pp_cycloess_Impseq_min$PCA_Input
+
+```
+
+Tras la exportación de los grupos proteicos diferenciales, se ha generado un diagrama de Venn (@fig-Venn-SpikeIn) donde se observa que, el 65.07% de las proteinas diferenciales exportadas es común e independiente al método de normalización de los datos.
+
+El solapamiento es mayor cuando las proteinas exportadas son las obtenidas tras normalizar por Rlr y vsn. Esto se debe a que el método cycloess devuelve un número de falsos positivos menor que los métodos Rlr y vsn. Por ello, la confianza en que de esos 4386 grupos proteicos detectados como diferenciales, es superior a la confianza sobre los 1271 grupos proteicos comunes entre los diferenciales obtenidos tras la normalización con Rlr y vsn.
+
+![Diagrama de Venn de las proteinas diferencialmente expresadas de manera significativa entre los diferentes métodos de normalización.](C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_final_min/VennDiagram_bm_spikeIn.png){#fig-Venn-SpikeIn}
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(ggplot2)
+
+# Definir los umbrales
+umbrales <- c(0.0, 0.1, 0.2, 0.3, 0.5, 1.0)
+
+# Iterar, filtrar por FC absoluto y contar
+datos_conteo <- map_dfr(umbrales, function(umbral) {
+  all_classif_final_min %>%
+    filter(abs(as.numeric(logFC)) >= umbral) %>%
+    group_by(Assay, classification) %>%
+    summarise(conteo = n(), .groups = "drop") %>%
+    mutate(Umbral = umbral)
+})
+
+# Asegurar que todas las categorías existan y ordenar los métodos
+datos_tabla <- datos_conteo %>%
+  mutate(
+    classification = factor(classification, levels = c("TP", "TN", "FP", "FN")),
+    # Añadimos la conversión de Assay a factor con el orden exacto deseado
+    Assay = factor(Assay, levels = c("cycloess_Impseq_min", "vsn_Impseq_min", "Rlr_Impseq_min"))
+  ) %>%
+  complete(Assay, Umbral, classification, fill = list(conteo = 0))
+
+# Sistema de coordenadas y control de la etiqueta del método
+estructura_filas <- datos_tabla %>%
+  select(Assay, Umbral) %>%
+  distinct() %>%
+  arrange(Assay, Umbral) %>%
+  mutate(Y = rev(row_number())) %>%
+  group_by(Assay) %>%
+  # Mantiene el nombre del método solo en la primera fila de cada bloque
+  mutate(Etiqueta_Assay = ifelse(Y == max(Y), as.character(Assay), "")) %>%
+  ungroup()
+
+# Escalado de contraste independiente para cada columna
+datos_grafico <- datos_tabla %>%
+  left_join(estructura_filas, by = c("Assay", "Umbral")) %>%
+  mutate(X = case_when(
+    classification == "TP" ~ 3,
+    classification == "TN" ~ 4,
+    classification == "FP" ~ 5,
+    classification == "FN" ~ 6
+  )) %>%
+  group_by(classification) %>%
+  # Convierte el rango de cada columna a una escala de 0 a 1
+  mutate(
+    min_c = min(conteo, na.rm = TRUE),
+    max_c = max(conteo, na.rm = TRUE),
+    conteo_escalado = ifelse(max_c == min_c, 1, (conteo - min_c) / (max_c - min_c))
+  ) %>%
+  ungroup()
+
+# Definir la paleta de colores pastel
+colores_pastel <- c(
+  "TP" = "#A8E6CF", 
+  "TN" = "#CBE6FF", 
+  "FP" = "#FFB7B2", 
+  "FN" = "#FFE2A6"  
+)
+
+# Dibujar la tabla estilizada
+grafico_final <- ggplot() +
+  # Usamos 'conteo_escalado' para maximizar el contraste intralumna
+  geom_tile(data = datos_grafico, 
+            aes(x = X, y = Y, fill = classification, alpha = conteo_escalado), 
+            color = "white", width = 0.92, height = 0.92) +
+  
+  geom_text(data = datos_grafico, aes(x = X, y = Y, label = conteo), 
+            size = 3.5, color = "gray20", fontface = "bold") +
+  
+  # Usamos 'Etiqueta_Assay' para imprimir el nombre solo una vez, en negrita
+  geom_text(data = estructura_filas, aes(x = 1, y = Y, label = Etiqueta_Assay), 
+            size = 3.5, hjust = 0.5, color = "gray20", fontface = "bold") +
+  geom_text(data = estructura_filas, aes(x = 2, y = Y, label = Umbral), 
+            size = 3.5, color = "gray30") +
+  
+  scale_fill_manual(values = colores_pastel) +
+  scale_alpha_continuous(range = c(0.15, 1)) + 
+  
+  scale_x_continuous(
+    limits = c(0.5, 6.5), 
+    breaks = 1:6, 
+    labels = c("Método", "|logFC| \u2265", "TP", "TN", "FP", "FN"),
+    position = "top"
+  ) +
+  theme_void() +
+  theme(
+    axis.text.x = element_text(face = "bold", size = 11, color = "gray25", margin = margin(b = 12)),
+    legend.position = "none", 
+    plot.margin = margin(20, 20, 20, 20),
+    plot.background = element_rect(fill = "#FAFAFA", color = NA) 
+  )
+
+```
+
+Se ha analizado la variación de verdaderos positivos (TP) y falsos positivos (FP) cuando filtramos según el FC. Por ello, dado que la cantidad de falsos positivos detectados al filtrar por un log2FC \> 0.2 y un log2FC \< -0.2 cae brucamente, manteniendo un elevado número de verdaderos positivos, se van a seleccionar los grupos proteicos que se expresan de manera diferencial y significativa con un logFC \> 0.2 y menor que -0.2.
+
+```{r}
+pp_cycloess_Impseq_min_th <- process_proteomics(preproc_data_spikein,
+                                       norm_method = "cycloess",
+                                       imp_method = "combo",
+                                       mar_method = "Impseq",
+                                       mnar_method = "min",
+                                       logFC_threshold = 0.2,
+                                       verbose = FALSE)
+
+pp_vsn_Impseq_min_th <- process_proteomics(preproc_data_spikein,
+                                       norm_method = "vsn",
+                                       imp_method = "combo",
+                                       mar_method = "Impseq",
+                                       mnar_method = "min",
+                                       logFC_threshold = 0.2,
+                                       verbose = FALSE)
+
+pp_Rlr_Impseq_min_th <- process_proteomics(preproc_data_spikein,
+                                       norm_method = "Rlr",
+                                       imp_method = "combo",
+                                       mar_method = "Impseq",
+                                       mnar_method = "min",
+                                       logFC_threshold = 0.2,
+                                       #export_dir = "C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_final_min/Rlr_Impseq_min_threshold",
+                                       verbose = FALSE)
+
+lista_proteinas_th <- list(
+  "cycloess_Impseq_min_th"   = pp_cycloess_Impseq_min_th$PCA_Input$FeatureID[pp_cycloess_Impseq_min_th$PCA_Input$sig_any],
+  "vsn_Impseq_min_th"     = pp_vsn_Impseq_min_th$PCA_Input$FeatureID[pp_vsn_Impseq_min_th$PCA_Input$sig_any],
+  "Rlr_Impseq_min_th" = pp_Rlr_Impseq_min_th$PCA_Input$FeatureID[pp_Rlr_Impseq_min_th$PCA_Input$sig_any]
+)
+
+results_list_widget(pp_cycloess_Impseq_min_th$DEPs_results)
+results_list_widget(pp_vsn_Impseq_min_th$DEPs_results)
+results_list_widget(pp_Rlr_Impseq_min_th$DEPs_results)
+```
