@@ -1,0 +1,474 @@
+---
+title: "Analysis of hepatocellular carcinoma data"
+subtitle: "Normalization with vsn"
+author: "Carlota de la Concepción Ruiz"
+format: 
+  html:
+    embed-resources: true
+    include-in-header:
+      - text: |
+          <style>
+            p, li {
+              text-align: justify;
+              hyphens: auto;
+            }
+          </style>
+editor: source
+---
+
+## Contexto
+
+Células de hepatocarcinoma celular se han tratado con 5’-metiltioadenosina (MTA) a diferentes concentraciones y se han tomado muestras a las 24 y a las 48 horas para cada una de las tres réplicas biológicas. Así, tenemos 18 muestras. Se van a comparar las proteínas presentes al mismo tiempo entre diferentes concentraciones para ver con el objetivo de entender a qué rutas metabólicas y funciones afecta la presencia de MTA a diferentes concentraciones. 
+
+###Resumen del tratamiento de los datos
+
+El análisis de datos reales, donde no se conoce el resultado final, se ha llevado a cabo de la misma manera. Se han analizado las métricas de PRONE y NAguideR para seleccionar los métodos de normalización e imputación de valores MAR y MNAR. Para estos últimos, como se ha indicado, no sirven las métricas de NAguideR. Sin embargo, como se ha observado, los métodos que peor evaluados aparecen según estas métricas, en el benchmarking realizado tienden a ser los óptimos para los valores MNAR.  
+
+En cuanto a los métodos de normalización e imputación de valores MAR, se han seleccionado vsn y cycloess para normalizar los datos. Estos métodos son los que se posicionan como óptimos ya que son los que mejor separan estos grupos de condiciones y más similitudes son capaces de encontrar entre réplicas de un mismo grupo (Tabla suplementaria 3). En cuanto al método de imputación de valores MAR en el caso de la normalización con vsn, se selecciona bpca por mostrarse ganador en la mayoría de las réplicas (Tabla suplementaria 4). Finalmente, dado que obtiene la posición más baja según las métricas de NAguideR, se selecciona zero como método de imputación de valores MNAR. 
+
+## Tratamiento de los datos
+
+### Preprocesamiento de los datos crudos y obtencion de métodos de normalizacion e imputación
+
+En primer lugar se ha comprobado que los datos exportados de Spectronaut corresponden con el formato que el paquete NADIA gestiona. Se observa que los nombres de las columnas son correctos. Sin embargo, las condiciones están indicadas como: "24H 0MTA", "24H 10MTA"... Y por ello, se ha de modificar la columna de condiciones cambiando el espacio por una barra baja.
+
+```{r loading data MTA}
+
+tsv_original <- "./20260916_165940_20250307_PLC_MTA_Report.tsv"
+tsv_nadia <- "./MTA_Report_for_NADIA.tsv"
+
+datos_mta <- read.delim(tsv_original, stringsAsFactors = FALSE)
+
+datos_mta$R.Condition <- gsub(" ", "_", datos_mta$R.Condition)
+
+datos_mta$R.Condition <- gsub("24H", "h24", datos_mta$R.Condition)
+
+datos_mta$R.Condition <- gsub("48H", "h48", datos_mta$R.Condition)
+
+write.table(datos_mta, file = tsv_nadia, sep = "\t", row.names = FALSE, quote = FALSE)
+
+```
+
+Se ha automatizado el proceso de selección de métodos de normalizacion e imputacion de datos (para valores ausentes aleatorios). Esta funcion, automáticamente guarda la salida de las funciones que evaluan las métricas en la carptea donde se encuentran los datos
+
+```{r preprocessing and metrics MTA}
+#| results: hide
+#| message: false
+
+source("./fun_norm_imp_methods.R")
+norm_imp_methods_MTA <- obtaining_norm_imp_methods(".","MTA_Report_for_NADIA.tsv", 
+c("h24_0MTA","h24_10MTA", "h24_50MTA", "h48_0MTA","h48_10MTA", "h48_50MTA"))
+
+
+```
+
+Si bien el proceso de selección de método de normalización e imputación de los datos, se ha automatizado, se confirma de manera manual que el método seleccionado es el óptimo. Así, en la @fig-norm-pc1 se puede observar que el mejor método de imputacion de valores es vsn a pesar de que al observar la @tbl-normalization-metrics el valor medio final de posicion es igual para vsn que para cycloess, dado que la varianza explicada por el primer componente es mayor para vsn, este será el método de normalización seleccionado.
+
+![Gráfico de barras de la varianza explicada por el componente principal 1 de cada una de los métodos de normalización de datos](./norm_metrics/nm_pc1_ranking.png){#fig-norm-pc1}
+
+|     **Método**      | **Rank PCV** | **Rank PMAD** | **Rank PEV** | **Rank Cor** | **Rank Sep** | **Rank Final** |
+|:---------------|:--------:|:---------:|:--------:|:--------:|:--------:|:----------:|
+|       vsn       |    1     |     1     |    1     |    1     |    12    |    3.2     |
+|    cycloess     |    2     |     3     |    2     |    2     |    7     |    3.2     |
+|      log2       |    4     |     8     |    9     |    3     |    4     |    5.6     |
+|    eqmedians    |    6     |     6     |    5     |    6     |    6     |    5.8     |
+|   medianNorm    |    5     |     7     |    6     |    7     |    5     |    6.0     |
+|       Rlr       |    3     |     5     |    3     |    9     |    11    |    6.2     |
+|  GlobalMedian   |    10    |    10     |    12    |    4     |    1     |    7.4     |
+|    quantile     |    8     |     4     |    4     |    12    |    10    |    7.6     |
+| quantile.robust |    9     |     2     |    8     |    11    |    9     |    7.8     |
+|       MAD       |    7     |     9     |    7     |    10    |    8     |    8.2     |
+|   GlobalMean    |    12    |    11     |    11    |    5     |    3     |    8.4     |
+|    meanNorm     |    11    |    12     |    10    |    8     |    2     |    8.6     |
+
+: Tabla con las puntuaciones de PRONE y el grado de correlación y separación entre FIX ¿?variables para los métodos de normalización. {#tbl-normalization-metrics}
+
+FIX: How normalisation methods are evaluated -\> across intra-cond 
+
+Los tres primeros permiten conseguir una menor var entre las bioreps de cada cond. Queremos que en el MAR la abundancia de un valor muy simnilar entre las 4 bioREPS. En Rank_Cor queremos que las replicas tengan mayor correlacion entre BIOREPS, que se parezcan más En Rank_Sep queremos que los % de los PC1 sea lo mmás alto posible para separar mejor las condiciones
+
+### Selección del método de imputación para valores MNAR
+
+El paquete NADIA permite analizar la capadidad de imputar valores de los diferentes metodos de imputacion MAR, esto se debe a que las métricas establecidas son aquellas usadas por NAguideR (FIX cita).
+
+En cuanto a la selección del método de imputación de datos MAR, el más adecuado parece ser bpca (@tbl-imputation-metrics). Se analizan las gráficas una a una para ver la robustez de dicho orden.Para el caso de el NRMSE (@fig-nrmse), muestra los valores más bajos, ligeramente inferior a los valores de Impseq e Impseqrob. Para la métrica SOR (@fig-sor), el mínimo valor lo obtiene la métrica Impseqrob, seguido por bpca y este por Impseq. En relacion con el PSS(@fig-pss), el método que menor puntuacion obtiene es missForest, obteniendo un valor inferior a la mitad del siguiente método. Estos siguientes métodos son bpca e Impseq. Finalmente, para la métrica ACC OI (@fig-acc-oi), los métodos bpca, Impseq, ImpseqRob y missForest obtienen la misma puntuacion (otros métodos tambien pero no destacan en otras métricas).
+
+::: {#fig-metricas-imputacion layout-ncol="2"}
+![NRMSE](./imp_metrics/im_nrmse.png){#fig-nrmse}
+
+![SOR](./imp_metrics/im_sor.png){#fig-sor}
+
+![PSS](./imp_metrics/im_pss.png){#fig-pss}
+
+![ACC OI](./imp_metrics/im_acc_oi.png){#fig-acc-oi}
+
+Gráficos de las métricas utilizadas por NAguideR para evaluar la imputación de valores ausentes por causas aleatorias.
+:::
+
+FIX: Explicacion NA para ZERO/halfmin en ACC OI Rank e
+
+En los métodos min, halfmin y zero aparece NA en la métrica ACC OI debido a que, dado que se imputa un valor constante (el minimo absoluto, la mitad del mínimo absoluto o cero respectivametne), la variabilidad de la distribucion de valores imputados es nula. Por ello, al tratar de dividir
+
+Para calcular el ranking se calcula la media entre el número de metricas de evaluación que toman valor.
+
+| **Method** | **NRMSE Rank** | **SOR Rank** | **PSS Rank** | **ACC OI Rank** | **Rank Mean** |
+|:-----------|:----------:|:--------:|:--------:|:-----------:|:---------:|
+| bpca       |          1 |        2 |        2 |           1 |       1.5 |
+| Impseq     |          2 |        3 |        3 |           2 |       2.5 |
+| missForest |          4 |        4 |        1 |           4 |      3.25 |
+| Impseqrob  |          3 |        1 |        6 |           3 |      3.25 |
+| nbavg      |          5 |        5 |        4 |           5 |      4.75 |
+| MLE        |          6 |        7 |        5 |           6 |         6 |
+| limpa      |          7 |        6 |        7 |           7 |      6.75 |
+| mice       |          8 |        9 |        8 |           8 |      8.25 |
+| knn        |          9 |        8 |        9 |           9 |      8.75 |
+| MinDet     |         10 |       10 |       10 |          11 |     10.25 |
+| MinProb    |         11 |       11 |       11 |          10 |     10.75 |
+| min        |         12 |       12 |       12 |          NA |        12 |
+| PI         |         13 |       13 |       13 |          13 |        13 |
+| halfmin    |         14 |       14 |       14 |          NA |        14 |
+| QRILC      |         15 |       15 |       16 |          12 |      14.5 |
+| zero       |         16 |       16 |       15 |          NA |    15.667 |
+
+: Tabla de métricas NAguideR. Los valores observados son la posicion dendiente de la métrica. {#tbl-imputation-metrics}
+
+Según la @tbl-imputation-metrics y como se ha indicado anteriormente, la métrica que parece más optima es bcpa, sin embargo, esto se ve sesgado por la ordenacion por orden alfabético cuando los valores métricos coinciden. Tras haber analizado las gráficas junto a la tabla, se determina que bpca será el método de imputación a utilizar debido a que, a pesar de tomar la primera posicion en ACC OI por ser el primero en orden alfabético, toma las primeras posiciones en otras ocasiones por tener métricas optimas y realmente inferiores a los demás (NRMSE).
+
+Finalmente, se selecciona el método zero para imputar valores de tipo MNAR ya que, se ha observado que se obtienen menos resultados falsos al imputar los valores MAR y MNAR diferenciandolos que utilizando el mismo método para ambos tipos de ausencias. Por ello, dado que las métricas NAguider solo son capaces de evaluar los métodos MAR, este se selecciona como se ha indicado y el método MNAR más optimo, tiende a ser el que menor posicion obtiene segun estas mismas métricas.
+
+### Normalización e imputación de valores
+
+Para llevar a cabo el análisis estadístico se utiliza la función `process_proteomics`. Para ello debemos indicar cuales son los datos normalizados con log2, extraidos de la función `obtaining_norm_imp_methods` así como los métodos de normalización e imputación seleccionados.
+
+Las comparaciones establecidas permiten analizar el efecto de la droga a diferentes concentraciones en un mismo tiempo. Así, podemos comparar el efecto de la droga frente a la ausencia a las 24 y a las 48h.
+
+```{r processing proteomics}
+#| results: hide
+#| message: false
+
+MTA_processed_data <- process_proteomics(norm_imp_methods_MTA$preproc_data,
+                        export_dir = "./proc_data",
+                        norm_method = norm_imp_methods_MTA$norm$Method[1],
+                        imp_method = "combo",
+                        mar_method = norm_imp_methods_MTA$imp$Method[1],
+                        mnar_method = norm_imp_methods_MTA$imp$Method[length(norm_imp_methods_MTA$imp$Method)],
+                        comparisons = c("h24_10MTA - h24_0MTA",
+                                        "h24_50MTA - h24_0MTA",
+                                        "h48_10MTA - h48_0MTA",
+                                        "h48_50MTA - h48_0MTA"
+                                        ))
+
+```
+
+### Obtención de proteinas diferenciales
+
+#### Volcanos a 24h
+```{r}
+
+volcano_24h_10mta <- volcano_highchart_list(
+  MTA_processed_data$DEPs_results,
+  comparisons = "h24_10MTA - h24_0MTA",
+  lfc_thr=0.2,
+  show_top_genes = 10,
+  title = "10MTA vs 0MTA at 24h"
+)
+
+volcano_24h_10mta$"h24_10MTA - h24_0MTA"
+
+```
+
+```{r}
+
+volcano_24h_50mta <- volcano_highchart_list(
+  MTA_processed_data$DEPs_results,
+  comparisons = "h24_50MTA - h24_0MTA",
+  lfc_thr=0.2,
+  show_top_genes = 10,
+  title = "50MTA vs 0MTA at 24h"
+)
+
+volcano_24h_50mta$"h24_50MTA - h24_0MTA"
+
+```
+
+#### Volcanos a 48h
+
+```{r}
+
+volcano_48h_10mta <- volcano_highchart_list(
+  MTA_processed_data$DEPs_results,
+  comparisons = "h48_10MTA - h48_0MTA",
+  lfc_thr=0.2,
+  show_top_genes = 10,
+  title = "10MTA vs 0MTA at 48h"
+)
+
+volcano_48h_10mta$"h48_10MTA - h48_0MTA"
+
+```
+
+```{r}
+
+volcano_48h_50mta <- volcano_highchart_list(
+  MTA_processed_data$DEPs_results,
+  comparisons = "h48_50MTA - h48_0MTA",
+  lfc_thr=0.2,
+  show_top_genes = 10,
+  title = "50MTA vs 0MTA at 48h"
+)
+
+volcano_48h_50mta$"h48_50MTA - h48_0MTA"
+
+```
+
+### PCA
+
+```{r}
+scores_PCA_MTA <- build_pca_scores(
+                            MTA_processed_data$PCA_Input,
+                            mode = c("all", "any", "specific"),
+                            alpha = 0.05,
+                            comparison = NULL,
+                            subset_label = NULL,
+                            center = TRUE,
+                            scale. = TRUE,
+                            filter_samples_to_comparison = FALSE,
+                            cond_col = "Condition"
+                          )
+
+pca_MTA <- pca_highchart(
+                scores_PCA_MTA,
+                group_order = c("h24_0MTA","h24_10MTA", "h24_50MTA", "h48_0MTA","h48_10MTA", "h48_50MTA"),
+                title = "PCA for MTA samples",
+                addEllipses = TRUE,
+                ellipse_type = "confidence",
+                ellipse_level = 0.95,
+                show_labels = TRUE,
+                label_size = 10
+              )
+
+pca_MTA
+```
+
+
+```{r}
+set.seed(42)
+
+boxplots_MTA <- boxplot_highchart_list(
+  MTA_processed_data$BoxPlot_Input,
+  assays = "bpca_zero",
+  color_by = "Condition",
+  group_order = c("h24_0MTA","h24_10MTA", "h24_50MTA", "h48_0MTA","h48_10MTA", "h48_50MTA"),
+  horizontal = FALSE,
+  show_outliers = TRUE,
+  title = "Processed intensity distributions",
+  subtitle = "Assay: {assay}",
+  height = 560
+)
+
+boxplots_MTA$bpca_zero
+```
+
+
+```{r}
+#| fig-width: 12
+#| fig-height: 15
+proteomics_heatmap(
+  MTA_processed_data$PCA_Input,
+  mode = "target",
+  comparison = "h24_50MTA - h24_0MTA",
+  feature_ids = MTA_processed_data$PCA_Input$FeatureID,
+  scale_data = "row",
+  sample_order = "clustering",
+  cluster_rows = TRUE,
+  cluster_columns = TRUE,
+  show_row_names = TRUE,
+  palette_value = "brewer:RdBu",
+  reverse_palette = TRUE,
+  heatmap_title = "Top 24h 0MTA, 10MTA and 50MTA protein profiles",
+  plot_width = 8,
+  plot_height = 7
+)
+```
+### Exporting DEPs
+
+```{r results_widget}
+results_list_widget(
+  MTA_processed_data$DEPs_results,
+  protein_quant = norm_imp_methods_MTA$preproc_data$protein_quant)
+```
+
+### Pattern profiling
+
+```{r pattern_profilling_any}
+#| results: hide
+#| message: false
+
+pattern_profile_MTA_any <- pattern_profiler_analysis(se_proc = MTA_processed_data$se_proc,
+                                             DEPs_results = MTA_processed_data$DEPs_results,
+                                             assay_name = "bpca_zero",
+                                             filter_mode = "any",
+                                             #Con todas las comparaciones y any si que funciona
+                                             c_range = 2:10)
+
+pp_summary_MTA_any <- summarize_pattern_profiler(pattern_profile_MTA_any$long_output)
+
+membership_overview <- data.frame(
+  Measure = c(
+    "Unique proteins",
+    "Protein--cluster associations",
+    "Proteins associated with multiple clusters"
+  ),
+  Value = c(
+    pp_summary_MTA_any$n_unique_features,
+    pp_summary_MTA_any$n_total_entries,
+    pp_summary_MTA_any$n_multi_cluster_features
+  )
+)
+```
+
+```{r table_assignments, results = "hide"}
+#| echo: false
+knitr::kable(
+  membership_overview,
+  caption = "Summary of the soft-clustering assignments."
+)
+```
+
+Measure                                    | Value|
+|:------------------------------------------|-----:|
+|Unique proteins                            |  2097|
+|Protein--cluster associations              |  2580|
+|Proteins associated with multiple clusters |   483|
+: Summary of the soft-clustering assignments. {#tbl-assignment-plots}
+
+```{r thresholds_table}
+thresholds <- c(0.25, 0.50, 0.70, 0.90)
+threshold_table <- data.frame(
+  Minimum_membership = thresholds,
+  Associations_retained = vapply(
+    thresholds,
+    function(x) sum(pattern_profile_MTA_any$long_output$Membership >= x),
+    numeric(1)
+  )
+)
+```
+```{r generating_thresholds_table, results = "hide"}
+#| echo: false
+knitr::kable(
+  threshold_table,
+  caption = "Effect of applying stricter membership thresholds."
+)
+```
+
+| Minimum_membership| Associations_retained|
+|------------------:|---------------------:|
+|               0.25|                  2580|
+|               0.50|                  2097|
+|               0.70|                  1718|
+|               0.90|                  1218|
+: Effect of applying stricter membership thresholds.{#tbl-membership-th}
+
+#### 24H comparisons
+
+```{r pattern_prof_24h}
+profile_plots_MTA_24h<- cluster_profile_highchart_list(
+  pattern_profile_MTA_any$long_output,
+  conditions = c("h24_0MTA","h24_10MTA", "h24_50MTA"),
+  min_membership = 0.80,
+  centroid_summary = "median"
+)
+
+profile_plots_MTA_24h$Cluster_1
+```
+
+```{r}
+profile_plots_MTA_24h$Cluster_2
+```
+
+```{r}
+centroid_plot_24h <- cluster_centroids_highchart(
+  pattern_profile_MTA_any$long_output,
+  conditions = c("h24_0MTA", "h24_10MTA", "h24_50MTA"),
+  min_membership = 0.80,
+  centroid_summary = "median",
+  title = "Pattern Profiler cluster centroids at 24h"
+)
+
+centroid_plot_24h
+```
+
+#### 48H comparisons
+
+```{r}
+profile_plots_MTA_48h<- cluster_profile_highchart_list(
+  pattern_profile_MTA_any$long_output,
+  conditions = c("h48_0MTA","h48_10MTA", "h48_50MTA"),
+  min_membership = 0.80,
+  centroid_summary = "median"
+)
+
+profile_plots_MTA_48h$Cluster_1
+```
+
+```{r}
+profile_plots_MTA_48h$Cluster_2
+```
+
+```{r}
+profile_plots_MTA_48h$Cluster_3
+```
+
+```{r}
+profile_plots_MTA_48h$Cluster_4
+```
+
+```{r}
+centroid_plot_48h <- cluster_centroids_highchart(
+  pattern_profile_MTA_any$long_output,
+  conditions = c("h48_0MTA", "h48_10MTA", "h48_50MTA"),
+  min_membership = 0.80,
+  centroid_summary = "median",
+  title = "Pattern Profiler cluster centroids at 48h"
+)
+
+centroid_plot_48h
+```
+
+#### 24 and 48 H
+
+```{r}
+centroid_plot_any <- cluster_centroids_highchart(
+  pattern_profile_MTA_any$long_output,
+  conditions = pattern_profile_MTA_any$conditions,
+  min_membership = 0.80,
+  centroid_summary = "median",
+  title = "Pattern Profiler cluster centroids"
+)
+
+centroid_plot_any
+```
+
+
+Hay un cluster de proteinas que de manera basal cuenta con poca abundancia. A medida que la concentracion de MTA aumenta, la abundancia tambien lo hace. Además, este mismo cluster, de manera basal tiene una abundancia mayor que a 24h y de la misma manera, cuando añades MTA, la abundancia de las proteinas de este cluster aumenta.
+
+Esto indica que esas proteinas aumentan sin MTA ya que, a distintos tiempos, sin MTA, la abudancia es superior en el segundo tiempo. 
+
+Por otro lado, hay un cluster con la tendencia contraria. 
+
+HAY QUE VER LAS FUNCIONES EN LAS QUE ESTÁN IMPLICADAS LAS PROTEINAS ESTAS
+
+## Análisis comparativo del uso de diferentes métodos de normalización e imputación de valores
+
+Dado que tanto vsn como cycloess se muestran como métodos adecuados para la normalización y de manera habitual, son los más óptimos, se analizan los métodos de imputación de valores MAR para ambos casos. 
+
+Como se ha observado en este documento, tras la normalización con el método vsn, el mejor método para imputar valores MAR parece ser bpca. Por otro lado, ya que no podemos corroborar cual es el mejor método para imputar valores MNAR, seleccionamos aquel que se encuentra en la peor posición. Así, normalizando los datos con el método vsn e imputando los valores MAR y MNAR con los métodos bpca y zero, respectivamente, se obtienen un 2428 proteinas significativamente diferenciales para alguna de las muestras. 
+
+De manera paralela, en el HTML correspondiente al análisis de los métodos de imputación tras la normalización con [cycloess](MTA_data_report_cycloess.html) se determina que, los métodos de imputación óptimos son bpca para valores ausentes MAR y halfmin para los valores ausentes MNAR. Así, se obtienen *** proteinas diferenciales. 
+
+Se seleccionan aquellas diferenciales cuando se realiza la comparación de 50 µM frente a 0µM a 24 y a 48 horas.
+
+
+## Resultados
+
+Se ha observado que la selección del método de normalización e imputación de valores no es trivial y esta debe ser evaluada durante el proceso. Finalmente, gracias a los diagramas de Venn podemos evaluar como de reales pueden llegar a ser las diferencias observadas. A pesar de no poder asegurar que no hay falsos positivos en las combinaciones, podemos asegurar que un 85% de las proteinas expresadas como diferenciales son coincidentes. Por ello, ambas combinaciones son adecuadas. Si se quiere asegurar un menor número de falsos positivos, en este caso, seleccionar el método de normalización cycloess sería lo óptimo. Así, aseguramos que el número de grupos proteicos no solapantes, es menor, lo que puede indicar que el número de falsos positivos no coincidentes (no conocemos los falsos positivos coincidentes ya que no contamos con proteinas spike-in), sea menor.  
