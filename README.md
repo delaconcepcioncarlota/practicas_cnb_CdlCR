@@ -12,7 +12,7 @@ Docs/           Archivos fuente de los informes
 └── pics/
     ├── finalFigures/         Figuras finales que se llaman desde los qmd
     ├── intermediateFigures/  Figuras intermedias
-    └── panels_pptx/          PPTX donde se montan los paneles
+    └── MP_panels.pptx          PPTX donde se montan los paneles
 ```
 
 ## Contexto
