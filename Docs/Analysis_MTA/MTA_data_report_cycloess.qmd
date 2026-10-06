@@ -1,0 +1,394 @@
+---
+title: "Analysis of hepatocellular carcinoma data"
+subtitle: "Normalization with cycloess"
+author: "Carlota de la Concepción Ruiz"
+format: 
+  html:
+    embed-resources: true
+    include-in-header:
+      - text: |
+          <style>
+            p, li {
+              text-align: justify;
+              hyphens: auto;
+            }
+          </style>
+editor: source
+---
+
+```{r loading NADIA library MTA_cycloess}
+#| results: hide
+#| message: false
+#| echo: false
+library(NADIA)
+```
+
+## Tratamiento de los datos
+
+```{r loading data MTA cycloess}
+#| results: hide
+#| echo: false
+#| message: false
+
+tsv_original <- "./20260916_165940_20250307_PLC_MTA_Report.tsv"
+tsv_nadia <- "./MTA_Report_for_NADIA.tsv"
+
+datos_mta <- read.delim(tsv_original, stringsAsFactors = FALSE)
+
+datos_mta$R.Condition <- gsub(" ", "_", datos_mta$R.Condition)
+
+datos_mta$R.Condition <- gsub("24H", "h24", datos_mta$R.Condition)
+
+datos_mta$R.Condition <- gsub("48H", "h48", datos_mta$R.Condition)
+
+write.table(datos_mta, file = tsv_nadia, sep = "\t", row.names = FALSE, quote = FALSE)
+
+```
+
+### Normalización e imputación de valores
+
+Tras la normalización según el método cycloess, se procede a analizar cual es el método de imputación de valores MAR óptimo tras dicha transformación. Para ello, se ejecutan las funciones `im_prepare_se` y `imputation_metrics` indicando el método de normalización utilizado. Tras la verificación manual, se ejecuta la funcion que devuelve las proteinas diferenciales.
+
+```{r processing proteomics}
+#| results: hide
+#| message: false
+#| warning: false
+
+preprocessed_data_MTA <- preprocess_spectronaut("./MTA_Report_for_NADIA.tsv", 
+                                            condition_order = c("h24_0MTA","h24_10MTA", "h24_50MTA", "h48_0MTA","h48_10MTA", "h48_50MTA"), 
+                                            verbose = FALSE)
+  
+# Creating se object for the imputation method analysis
+se_imp_MTA_cycloess <- im_prepare_se(preprocessed_data_MTA,
+                      norm_method = "cycloess") #Normalization method
+
+imp_metrics_MTA_cycloess<- imputation_metrics(se_imp_MTA_cycloess,
+                                assay_name = "cycloess", #Normalization method
+                                pattern = "from_data")
+```
+
+|   **Método**   | **NRMSE Rank** | **SOR Rank** | **PSS Rank** | **ACC OI_Rank** | **Rank Mean** |
+|:----------|:----------:|:--------:|:--------:|:-----------:|:---------:|
+|    bpca    |     1      |    2     |    2     |      1      |   1.50    |
+| missForest |     2      |    4     |    1     |      2      |   2.25    |
+|   Impseq   |     3      |    3     |    4     |      3      |   3.25    |
+| Impseqrob  |     4      |    1     |    6     |      4      |   3.75    |
+|   nbavg    |     6      |    5     |    3     |      6      |   5.00    |
+|    mice    |     5      |    8     |    7     |      5      |   6.25    |
+|    knn     |     8      |    6     |    5     |      8      |   6.75    |
+|   limpa    |     7      |    7     |    8     |      7      |   7.25    |
+|    MLE     |     9      |    9     |    9     |      9      |   9.00    |
+|     PI     |     10     |    10    |    10    |     12      |   10.50   |
+|   MinDet   |     11     |    11    |    13    |     11      |   11.50   |
+|   QRILC    |     13     |    13    |    11    |     10      |   11.75   |
+|  MinProb   |     12     |    12    |    12    |     13      |   12.25   |
+|    zero    |     14     |    14    |    14    |     NA      |   14.00   |
+|    min     |     15     |    15    |    15    |     NA      |   15.00   |
+|  halfmin   |     16     |    16    |    16    |     NA      |   16.00   |
+
+: Ranking de métodos de imputación cuando la normalización se lleva a cabo con el métodocycloess. {#tbl-imput-metrics-cycloess}
+
+Así, se obtiene la @tbl-imput-metrics-cycloess donde se observa que el método más apropiado para imputar valores MNAR parece ser *bpca*.
+
+```{r}
+#| results: hide
+#| message: false
+#| echo: false
+
+MTA_processed_data_cycloess_lastMNAR <- process_proteomics(
+  preprocessed_data_MTA,
+  export_dir = "./proc_data_cycloess_halfmin",
+  norm_method = "cycloess",
+  imp_method = "combo", # Combo for select MAR and MNAR methods
+  # Manual confirmation of imputation methods
+  # The first one of the table
+  mar_method = imp_metrics_MTA_cycloess$metrics_table$Method[1], 
+  # The last one of the table
+  mnar_method = imp_metrics_MTA_cycloess$metrics_table$Method[
+    length(imp_metrics_MTA_cycloess$metrics_table$Method)],
+  comparisons = c("h24_10MTA - h24_0MTA",
+                  "h24_50MTA - h24_0MTA",
+                  "h48_10MTA - h48_0MTA",
+                  "h48_50MTA - h48_0MTA"
+  )) #Drug concentration comparisons
+```
+
+## Valoración del resultado
+
+### PCA
+
+Mediante el análisis de los componentes principales, se evalua si las muestras se separan de manera correcta en funcion de las condiciones. Así, se puede visualizar que el primer componente principal separa en función de la hora de la toma de la muestra. El segudo componente separa las muestras en función de la cantidad de droga suministrada.
+```{r}
+#Builting scores for PCA graph #FIX porque tengo que hacer scores¿?
+scores_PCA_MTA_cycloess <- build_pca_scores(
+                            MTA_processed_data_cycloess_lastMNAR$PCA_Input,
+                            # To choose the one that i want
+                            mode = c("all", "any", "specific"), 
+                            #	Significance threshold for mode: specific
+                            alpha = 0.05, 
+                            comparison = NULL,
+                            subset_label = NULL,
+                            # Centering and scaling data before PCA
+                            center = TRUE,
+                            scale. = TRUE,
+                            cond_col = "Condition"
+                          )
+
+# Interactive PCA generation
+pca_MTA_cycloess <- pca_highchart(
+                scores_PCA_MTA_cycloess,
+                group_order = c("h24_0MTA","h24_10MTA", "h24_50MTA", "h48_0MTA","h48_10MTA", "h48_50MTA"),
+                title = "PCA for MTA samples",
+                addEllipses = TRUE,
+                ellipse_type = "confidence", #Circular ellipse
+                ellipse_level = 0.95, # 95% of confidence of FIX
+                show_labels = TRUE,
+                label_size = 10
+              )
+
+pca_MTA_cycloess #To visualize the PCA
+```
+
+### Mapa de calor
+
+Al generar el mapa de calor en funcion de los clusters que aparecen por naturaleza, podemos observar, al igual que en el PCA, si las proteinas de una misma condicion, siguen una misma tendencia.
+
+```{r}
+#| fig-width: 12
+#| fig-height: 15
+#| warning: false
+#| 
+
+proteomics_heatmap(
+  MTA_processed_data_cycloess_lastMNAR$PCA_Input,
+  mode = "target",
+  comparison = "h24_50MTA - h24_0MTA", #Just colored this comparison, fix 
+  feature_ids = MTA_processed_data_cycloess_lastMNAR$PCA_Input$FeatureID,
+  scale_data = "row", 
+  sample_order = "clustering", # The samples are distributed due to the clusters formed
+  cluster_rows = TRUE, # FALSE
+  cluster_columns = TRUE,
+  show_row_names = TRUE,
+  palette_value = "brewer:RdBu",
+  reverse_palette = TRUE,
+  heatmap_title = "Top 24h 0MTA, 10MTA and 50MTA protein profiles",
+  plot_width = 8,
+  plot_height = 7
+)
+```
+
+### Obtención de proteinas diferenciales
+
+Con el objetivo de visualizar la tendencia de los cambios en cada condición, se han generado los gráficos Volcano. Estos muestran la cantidad de proteinas que se muestras sobreexpresadas así como las infraexpresadas.
+
+#### Volcanos a 24h
+```{r}
+
+volcano_cycloess_24h_10mta <- volcano_highchart_list(
+  MTA_processed_data_cycloess_lastMNAR$DEPs_results,
+  comparisons = "h24_10MTA - h24_0MTA",
+  lfc_thr=0.2,
+  show_top_genes = 10, # To highlight the top logFC genes
+  title = "10MTA vs 0MTA at 24h"
+)
+
+volcano_cycloess_24h_10mta$"h24_10MTA - h24_0MTA"
+
+```
+
+```{r}
+
+volcano_cycloess_24h_50mta <- volcano_highchart_list(
+  MTA_processed_data_cycloess_lastMNAR$DEPs_results,
+  comparisons = "h24_50MTA - h24_0MTA",
+  lfc_thr=0.2,
+  show_top_genes = 10, # To highlight the top logFC genes
+  title = "50MTA vs 0MTA at 24h"
+)
+
+volcano_cycloess_24h_50mta$"h24_50MTA - h24_0MTA"
+
+```
+
+#### Volcanos a 48h
+
+```{r}
+
+volcano_cycloess_48h_10mta <- volcano_highchart_list(
+  MTA_processed_data_cycloess_lastMNAR$DEPs_results,
+  comparisons = "h48_10MTA - h48_0MTA",
+  lfc_thr=0.2,
+  show_top_genes = 10, # To highlight the top logFC genes
+  title = "10MTA vs 0MTA at 48h"
+)
+
+volcano_cycloess_48h_10mta$"h48_10MTA - h48_0MTA"
+
+```
+
+```{r}
+
+volcano_cycloess_48h_50mta <- volcano_highchart_list(
+  MTA_processed_data_cycloess_lastMNAR$DEPs_results,
+  comparisons = "h48_50MTA - h48_0MTA",
+  lfc_thr=0.2,
+  show_top_genes = 10, # To highlight the top logFC genes
+  title = "50MTA vs 0MTA at 48h"
+)
+
+volcano_cycloess_48h_50mta$"h48_50MTA - h48_0MTA"
+
+```
+
+### Exporting DEPs
+
+```{r results_widget}
+# To select which data I want to download for STRING analysis
+results_list_widget(
+  MTA_processed_data_cycloess_lastMNAR$DEPs_results, #Diferential expression proteins
+  protein_quant = preprocessed_data_MTA$protein_quant) # Raw data with % of appearance
+```
+
+### Pattern profiling
+
+```{r pattern_profilling_any}
+#| results: hide
+#| message: false
+
+pattern_profile_MTA_cycloess_any <- pattern_profiler_analysis(se_proc = MTA_processed_data_cycloess_lastMNAR$se_proc,
+                                             DEPs_results = MTA_processed_data_cycloess_lastMNAR$DEPs_results,
+                                             assay_name = "bpca_halfmin", # Data to work with
+                                             filter_mode = "any", # Diferential on any comparison
+                                             #Con todas las comparaciones y any si que funciona
+                                             c_range = 2:10)
+
+pp_summary_MTA_cycloess_any <- summarize_pattern_profiler(pattern_profile_MTA_cycloess_any$long_output)
+
+membership_overview <- data.frame(
+  Measure = c(
+    "Unique proteins",
+    "Protein--cluster associations",
+    "Proteins associated with multiple clusters"
+  ),
+  Value = c(
+    pp_summary_MTA_cycloess_any$n_unique_features,
+    pp_summary_MTA_cycloess_any$n_total_entries,
+    pp_summary_MTA_cycloess_any$n_multi_cluster_features
+  )
+)
+```
+
+```{r table_assignments, results = "hide"}
+#| echo: false
+knitr::kable(
+  membership_overview,
+  caption = "Summary of the soft-clustering assignments."
+)
+```
+
+Measure                                    | Value|
+|:------------------------------------------|-----:|
+|Unique proteins                            |  2097|
+|Protein--cluster associations              |  2580|
+|Proteins associated with multiple clusters |   483|
+: Summary of the soft-clustering assignments. {#tbl-assignment-plots}
+
+```{r thresholds_table}
+thresholds <- c(0.25, 0.50, 0.70, 0.90)
+threshold_table <- data.frame(
+  Minimum_membership = thresholds,
+  Associations_retained = vapply(
+    thresholds,
+    function(x) sum(pattern_profile_MTA_cycloess_any$long_output$Membership >= x),
+    numeric(1)
+  )
+)
+```
+```{r generating_thresholds_table, results = "hide"}
+#| echo: false
+knitr::kable(
+  threshold_table,
+  caption = "Effect of applying stricter membership thresholds."
+)
+```
+
+| Minimum_membership| Associations_retained|
+|------------------:|---------------------:|
+|               0.25|                  2580|
+|               0.50|                  2097|
+|               0.70|                  1718|
+|               0.90|                  1218|
+: Effect of applying stricter membership thresholds.{#tbl-membership-th}
+
+#### 24H comparisons
+
+```{r pattern_prof_24h}
+profile_plots_MTA_cycloess_24h<- cluster_profile_highchart_list(
+  pattern_profile_MTA_cycloess_any$long_output,
+  conditions = c("h24_0MTA","h24_10MTA", "h24_50MTA"),
+  min_membership = 0.80, # The protein group should have a 90% of confidence
+  centroid_summary = "median"
+)
+
+profile_plots_MTA_cycloess_24h
+```
+
+```{r}
+centroid_plot_24h <- cluster_centroids_highchart(
+  pattern_profile_MTA_cycloess_any$long_output,
+  conditions = c("h24_0MTA", "h24_10MTA", "h24_50MTA"),
+  min_membership = 0.70,
+  centroid_summary = "median",
+  title = "Pattern Profiler cluster centroids"
+)
+
+centroid_plot_24h
+```
+
+#### 48H comparisons
+
+```{r}
+profile_plots_MTA_cycloess_48h<- cluster_profile_highchart_list(
+  pattern_profile_MTA_cycloess_any$long_output,
+  conditions = c("h48_0MTA","h48_10MTA", "h48_50MTA"),
+  min_membership = 0.80,
+  centroid_summary = "median"
+)
+
+profile_plots_MTA_cycloess_48h
+```
+
+```{r}
+centroid_plot_48h <- cluster_centroids_highchart(
+  pattern_profile_MTA_cycloess_any$long_output,
+  conditions = c("h48_0MTA", "h48_10MTA", "h48_50MTA"),
+  min_membership = 0.70,
+  centroid_summary = "median",
+  title = "Pattern Profiler cluster centroids"
+)
+
+centroid_plot_48h
+```
+
+#### 24 and 48 H
+
+```{r}
+centroid_plot_any <- cluster_centroids_highchart(
+  pattern_profile_MTA_cycloess_any$long_output,
+  conditions = pattern_profile_MTA_cycloess_any$conditions,
+  min_membership = 0.70,
+  centroid_summary = "median",
+  title = "Pattern Profiler cluster centroids"
+)
+
+centroid_plot_any
+```
+
+
+Hay un cluster de proteinas que de manera basal cuenta con poca abundancia. A medida que la concentracion de MTA aumenta, la abundancia tambien lo hace. Además, este mismo cluster, de manera basal tiene una abundancia mayor que a 24h y de la misma manera, cuando añades MTA, la abundancia de las proteinas de este cluster aumenta.
+
+Esto indica que esas proteinas aumentan sin MTA ya que, a distintos tiempos, sin MTA, la abudancia es superior en el segundo tiempo. 
+
+Por otro lado, hay un cluster con la tendencia contraria. 
+
+HAY QUE VER LAS FUNCIONES EN LAS QUE ESTÁN IMPLICADAS LAS PROTEINAS ESTAS
