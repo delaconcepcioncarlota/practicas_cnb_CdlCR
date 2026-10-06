@@ -1,0 +1,208 @@
+---
+title: "3_bench_vsn_combs_imputation"
+author: "Carlota de la Concepcion Ruiz"
+format: pdf
+editor: source
+---
+
+Como se ha indicado anteriormente, la comparación estadística requiere los valores esperados de los cambios. Además, podemos proporcionar la naturaleza de cada proteina. 
+
+### Valores esperados de la tasa de cambio
+
+Se establecen los valores esperados de cambio en funcion de las proporciones de cada especie en cada muestra. Dado que no se podría calcular el cociente de 0, se ha establecido 1 como valor mínimo, de tal manera que las tasas de cambios esperadas en el caso de las comparaciones con la muestra D, no son completamente realistas. 
+
+```{r expected change}
+expected_log2FC <- round(c(
+                    #B-A
+                    log2(10/5),log2(10/15),
+                    #C-A
+                    log2(15/5),log2(5/15), 
+                    #D-A
+                    log2(20/5),log2(1/15),
+                    #C-B
+                    log2(15/10),log2(5/10),
+                    #D-B
+                    log2(20/10),log2(1/10),
+                    #D-c
+                    log2(20/15), log2(1/5)
+                    ),2)
+
+expected_change <- data.frame(
+    Comparison     = rep(c("B-A", "C-A", "D-A", "C-B", "D-B", "D-C"), each = 2),
+    Species        = rep(c("ECOLI", "YEAST"), times = 6),
+    expected_logFC = expected_log2FC)
+```
+
+### Asociacion de proteinas a especias
+
+La asociación de proteinas a especies permite ver como se distribuyen los resultados. Se espera que los verdaderos negativos pertenezcan a proteinas humanas mientras que los verdaderos positivos pertenezcan a proteinas de *E. coli* o *S. cerevisiae*
+
+```{r protein association vsn}
+spikein_data <- read.csv("../Report_Species.tsv", sep="\t")
+
+
+species_pg_df <- data.frame(Protein.IDs = spikein_data$PG.ProteinGroups,
+                            Species = spikein_data$PG.OrganismId)
+```
+
+## Imputaciones a testar
+
+Se establecen *vsn* y vsn como los métodos de normalizacion óptimos dados los resultados en el benchmarking de la propia normalización
+
+```{r combinations vsn}
+combinations_vsn_combs_imput <- list(
+
+  #Imputacion sin distinguir valores MAR y MNAR
+  list(norm_meth = "vsn", imp_meth = "Impseq", mar_meth = "Impseq", mnar_meth = "min"),
+  
+  #Imputacion combo
+  list(norm_meth = "vsn", imp_meth = "combo", mar_meth = "Impseq", mnar_meth = "QRILC"),
+  list(norm_meth = "vsn", imp_meth = "combo", mar_meth = "Impseq", mnar_meth = "MinDet"),
+  list(norm_meth = "vsn", imp_meth = "combo", mar_meth = "Impseq", mnar_meth = "MinProb"),
+  list(norm_meth = "vsn", imp_meth = "combo", mar_meth = "Impseq", mnar_meth = "PI"),
+  list(norm_meth = "vsn", imp_meth = "combo", mar_meth = "Impseq", mnar_meth = "min"),
+  list(norm_meth = "vsn", imp_meth = "combo", mar_meth = "Impseq", mnar_meth = "halfmin"),
+  list(norm_meth = "vsn", imp_meth = "combo", mar_meth = "Impseq", mnar_meth = "zero"),
+  
+  list(norm_meth = "vsn", imp_meth = "softHybrid", mar_meth = "Impseq", mnar_meth = "min"),
+  
+  list(norm_meth = "vsn", imp_meth = "limpa", de_method = "limpa")
+
+  )
+```
+
+## Funcion de nombrar
+
+```{r}
+
+making_names <- function(combin){
+  if(combin$imp_meth ==  "combo"){
+    paste(combin$norm_meth, combin$mar_meth, combin$mnar_meth, sep="_")
+  }
+  #Non imputation
+  else if(combin$imp_meth == "none"){
+    paste(combin$norm_meth, "none", sep="_")
+  }
+  # SoftHybrid method
+  else if(combin$imp_meth == "softHybrid"){
+    paste(combin$norm_meth, "softHybrid", combin$mar_meth, combin$mnar_meth, sep="_")
+  }
+  #limpa method
+  else if(combin$imp_meth == "limpa"){
+    paste(combin$norm_meth, combin$imp_meth, sep = "_")
+  }
+  else {
+    paste(combin$norm_meth, combin$imp_meth, sep="_")
+  } 
+}
+
+```
+
+## Bucle de processing con benchmarking unico
+
+```{r}
+
+bm_vsn_combs_imput_list <- list()
+
+OpDEA_vsn_combs_imput_list <- list()
+  
+confusion_vsn_combs_imput_list <- list()
+
+classif_vsn_combs_imput_list <- list()
+
+for (comb in combinations_vsn_combs_imput){
+
+  name <- making_names(comb)
+  
+  pp_result <- process_proteomics(preproc_data_spikein,
+                     norm_method = comb$norm_meth,
+                     imp_method = comb$imp_meth,
+                     mar_method = comb$mar_meth,
+                     mnar_method = comb$mnar_meth,
+                     de_method = comb$de_method,
+                     verbose = FALSE)
+  
+  bm_result <- benchmarking_proteomics(pp_result$DEPs_results,
+                          expected_values = expected_change,
+                          species_df = species_pg_df, 
+                          output_dir = "C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_vsn_combs_imput/bm_vsn_combs_single",
+                          verbose = FALSE)
+  
+  #Salvado de datos para cada bm
+  OpDEA <- bm_result$opdea_metrics
+  OpDEA$Assay <- name 
+  OpDEA_vsn_combs_imput_list[[name]] <- OpDEA
+  
+  confusion <- bm_result$confusion_overall
+  confusion$Assay <- name 
+  confusion_vsn_combs_imput_list[[name]] <- confusion
+
+  bm_w_imput <- bm_result$metrics_table
+  bm_w_imput$Assay <- name 
+  bm_vsn_combs_imput_list[[name]] <- bm_w_imput
+  
+  classif <- bm_result$classified_df
+  classif$Assay <- name 
+  classif_vsn_combs_imput_list[[name]] <- classif
+}
+
+all_OpDEA_vsn_combs_imput <- do.call(rbind, OpDEA_vsn_combs_imput_list)
+all_confusion_vsn_combs_imput <- do.call(rbind, confusion_vsn_combs_imput_list)
+all_metrics_bm_vsn_combs_imput <- do.call(rbind, bm_vsn_combs_imput_list)
+all_classif_vsn_combs_imput <- do.call(rbind, classif_vsn_combs_imput_list)
+
+```
+
+## Benchmarking multiple
+
+```{r}
+
+bm_multi_results_vsn_combs_imput <- benchmarking_multiple(
+  opdea_combined = all_OpDEA_vsn_combs_imput,
+  confusion_combined = all_confusion_vsn_combs_imput,
+  classified_combined = all_classif_vsn_combs_imput,
+  bench_metrics_combined = all_metrics_bm_vsn_combs_imput,
+  output_dir = "C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_vsn_combs_imput/bm_vsn_combs_multi",
+  verbose = FALSE
+)
+
+```
+
+## Gráficos y comparaciones
+
+```{r}
+bm_multi_results_vsn_combs_imput$gg_ranking_bars_mean
+```
+
+Según la gráfica superior, donde se muestra la posición según las métricas OpDEA, al igual que en la @fig-ext-rank-bars, el mejor método de imputación de valores cuando la normalización se realiza mediante vsn_combs, es la combinación de bpca y min. El método bpca se usa para imputar valores en los valores ausentes aleatorios mientras que el método min se utiliza en los valores ausentes no aleatorios.
+
+## FIX
+
+![Gráfico de barras de las métricas](%22C:\Users\Proteomica\Documents\tfm_cdlcr\Benchmarking_norm_w_imput\Benchmarking_norm_w_imput_res\bm_multiple_extended_ranking_bars.png%22){#fig-ext-rank-bars}
+
+```{r}
+bm_multi_results_vsn_combs_imput$extended_ranking
+```
+
+Al analizar las curvas ROC para cada comparación, el método de imputacion para valores ausentes aleatorios bpca tambien tiende a tomar las posiciones más altas alternando el método de imputacion de valores ausentes no aleatorios entre min y halfmin. Dependiendo de la diferencia real entre las muestras (@fig-ROC-comp-DC).
+
+## FIX
+
+\`![Curva ROC de la comparación D-C cuando se modifica el método de imputación de valores](%22C:\Users\Proteomica\Documents\tfm_cdlcr\Benchmarking_norm_w_imput\Benchmarking_norm_w_imput_res\by_comparison\bm_roc_zoom_D-C.png%22){#fig-ROC-comp-DC}
+
+```{r}
+bm_multi_results_vsn_combs_imput$gg_roc_zoom_by_comp
+```
+
+El método de imputación Impseq para los valores ausentes aleatorios combinado con el método de imputacion min para valores ausentes no aleatorios tambien toma posiciones altas cuando la diferencia entre muestras es más notoria. Especialmente, cuando la muestra D no se está comparando. Esto indica que la combinación del método Impseq y min, no es tan capaz de controlar los falsos negativos como la combinación del método bpca junto con min o halfmin. Esto se puede observar en los gráficos siguientes.
+
+```{r}
+
+bm_multi_results_vsn_combs_imput$gg_confusion_stacked_by_comp$`C-A`
+
+bm_multi_results_vsn_combs_imput$gg_confusion_stacked_by_comp$`D-C`
+```
+
+QUe sea una muestra sintética hace que haya menos variabilidad biológica . El problema de estos datos es que cada réplica es igual, aunque se han procesado de maenra independiente, la muestra en si es igual.
+
+Final -\> probar con una muestra real FC
