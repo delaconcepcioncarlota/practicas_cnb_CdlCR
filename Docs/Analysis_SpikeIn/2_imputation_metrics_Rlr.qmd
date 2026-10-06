@@ -1,0 +1,77 @@
+---
+title: "Análisis de los métodos de imputacion de valores normalizando con Rlr"
+author: "Carlota de la Concepción Ruiz"
+format: html
+editor: source
+---
+
+## Carga de datos y filtrado inicial
+
+```{r}
+library(NADIA)
+preproc_data_spikein <- preprocess_spectronaut("../Benchmarking_data.tsv", condition_order = c("A", "B", "C", "D"), verbose = FALSE)
+```
+
+Se normalizan los datos con el método Rlr para poder continuar con el análisis de las métricas. Se usa la funcoin im_prepare_se generada para este análisis.
+
+```{r}
+imp_se_Rlr <- im_prepare_se(
+    preproc_data_spikein,
+    norm_method = "Rlr",
+    verbose = FALSE)
+```
+
+## Imputación de los datos
+
+La imputación de datos es necesaria para evitar la pérdida de información y realizar un análisis estadístico más realista.
+
+Dado que la deteccion de proteinas depende tanto de la muestra como de la sensibilidad del equipo de análisis, pueden aparecer datos como ausentes que realmente no lo son. Cuando esto ocurre, se dice que aparecen valores faltantes y se determinan como *NA* (En algunos casos, la máquina indica un valor cero que se controla en el paso de preprocesamiento de los datos crudos sustituyendo el cero por un *NA*).
+
+Un valor puede ser ausente por dos motivos diferentes, aparecer a valores inferiores al límite de detección o por fallos de detección. Así, se determinan dos tipos de NAs: - MARs (Missing At Random): estos son los valores ausentes a causa de fallos en la detección. Un valor faltante en una replica de una condición en la que aparece en todas las réplicas menos una (umbral a determinar por el investigador) suele ser un valor ausente debido a un fallo en la detección. - MNAR (Missing Not At Random): valores ausentes debido a un nivel de abundancia muy bajo que es incapaz de detectar el equipo. Así, en este caso, no suelen aparecer valores de cuantificacion para ninguna de las replicas de una misma condición (pero si aparece en otras condiciones).
+
+Dado que a naturaleza de los valores ausentes no siempre es la misma, el manejo e imputación de valores no conviene hacerla de la misma manera. Poder seleccionar el mejor método de imputación de datos para cada tipo de valor ausente, es el objetivo de dicho paquete.
+
+*FIX ME con la MP NB*
+
+## Obtencion de valores métricos para la selección del método de imputacion
+
+Se selecciona pattern = "from_data" con el objetivo de que la distribución que usada para evaluar las métricas sea lo más parecida a la real.
+
+```{r}
+im_metr_Rlr <- imputation_metrics(
+    imp_se_Rlr,
+    assay_name = "Rlr",
+    pattern = "from_data",
+    output_dir = "C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/imputation_metrics_Rlr",
+    verbose = FALSE)
+```
+
+## Análisis de las métricas para selección del métodos de imputacion
+
+Al igual que en los métodos de normalización, los métodos de imputacion cuentan con unas métricas para su evaluación.
+
+Así, de la misma manera se rankean los diferentes métodos con valores del 1 al número de métodos evaluados y promedia la posición.
+
+```{r}
+im_metr_Rlr$metrics_table[, c( "Method", "NRMSE", "SOR", "PSS", "ACC_OI", "Rank_Mean")]
+```
+
+Las métricas para valorar los métodos de imputacion usadas por NAguider solo son útiles para los métodos MAR. Por ello, tras el análisis del método de normalización más optimo para estos datos, se selecciona el mejor método de imputación para los valores ausentes debido a causas aleatorias mediante las métricas NRMSE, SOR, PSS y ACC_OI determinadas por NAguider.
+
+Así, el método que parece ser el más adecuado para imputar los valores ausentes tipo MAR es el métood Impseq ya que es el que se posiciona como primero según la media. Esta media se calcula en función de como coloca cada puntuación al método.
+
+```{r, fig.width = 10, fig.height = 10}
+im_metr_Rlr$metrics
+```
+
+En las gráficas se observan las puntuaciones de cada métrica para cada método.
+
+```{r, fig.width = 12, fig.height = 10}
+im_metr_Rlr$ranking
+```
+
+La imagen superior muestra que el mejor método de imputación de datos es *Impseq*, además de ser confirmado por tener el menor RankMean, en tres de las cuatro métricas tiene un valor de uno, es decir, tiene el valor más optimo de entre todos los métodos de imputación. Por ello se seleccionará como método simple de imputacion de datos a la hora de realizar el benchmarking.
+
+QUe sea una muestra sintética hace que haya menos variabilidad biológica . El problema de estos datos es que cada réplica es igual, aunque se han procesado de maenra independiente, la muestra en si es igual.
+
+Final -\> probar con una muestra real FC
