@@ -67,7 +67,7 @@ preproc_data_spikein <- preprocess_spectronaut
   ("./tfm_cdlcr/Benchmarking_data.tsv", 
   condition_order = c("A", "B", "C", "D"), 
   verbose = FALSE)
-  ```
+```
 
 ## Selección del método de normalización
 
