@@ -20,9 +20,9 @@ editor: source
 
 Células de hepatocarcinoma celular se han tratado con 5’-metiltioadenosina (MTA) a diferentes concentraciones y se han tomado muestras a las 24 y a las 48 horas para cada una de las tres réplicas biológicas. Así, tenemos 18 muestras. Se van a comparar las proteínas presentes al mismo tiempo entre diferentes concentraciones para ver con el objetivo de entender a qué rutas metabólicas y funciones afecta la presencia de MTA a diferentes concentraciones. 
 
-###Resumen del tratamiento de los datos
+### Resumen del tratamiento de los datos
 
-El análisis de datos reales, donde no se conoce el resultado final, se ha llevado a cabo de la misma manera. Se han analizado las métricas de PRONE y NAguideR para seleccionar los métodos de normalización e imputación de valores MAR y MNAR. Para estos últimos, como se ha indicado, no sirven las métricas de NAguideR. Sin embargo, como se ha observado, los métodos que peor evaluados aparecen según estas métricas, en el benchmarking realizado tienden a ser los óptimos para los valores MNAR.  
+El análisis de datos reales, donde no se conoce el resultado final, se ha llevado a cabo de la misma manera. Se han analizado las métricas de PRONE y NAguideR para seleccionar los métodos de normalización e imputación de valores MAR y MNAR. Para estos últimos, como se ha indicado, no sirven las métricas de NAguideR. Sin embargo, como se ha observado, los métodos que peor evaluados aparecen según estas métricas, en el benchmarking realizado anteriormente tienden a ser los óptimos para los valores MNAR.  
 
 En cuanto a los métodos de normalización e imputación de valores MAR, se han seleccionado vsn y cycloess para normalizar los datos. Estos métodos son los que se posicionan como óptimos ya que son los que mejor separan estos grupos de condiciones y más similitudes son capaces de encontrar entre réplicas de un mismo grupo (Tabla suplementaria 3). En cuanto al método de imputación de valores MAR en el caso de la normalización con vsn, se selecciona bpca por mostrarse ganador en la mayoría de las réplicas (Tabla suplementaria 4). Finalmente, dado que obtiene la posición más baja según las métricas de NAguideR, se selecciona zero como método de imputación de valores MNAR. 
 
