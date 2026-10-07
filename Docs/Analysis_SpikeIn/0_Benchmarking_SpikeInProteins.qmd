@@ -1,5 +1,5 @@
 ---
-title: "Benchmarking Spike-in proteins"
+title: "Análisis comparativo de una muestra con proteinas *spike-in*"
 author: "Carlota de la Concepción Ruiz"
 format: 
   html:
