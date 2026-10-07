@@ -48,7 +48,7 @@ Dada la presencia de péptidos compartidos, si un péptido se asocia a una prote
 
 # Análisis estadísitico comparativo de datos con proteínas *spike-in*
 
-Los datos generados con Spectronaut se cargaron en R y se procesaron con la función preprocess_spectronaut(), que elimina los grupos proteicos con abundancia nula en todas las muestras y sustituye los ceros restantes por NAs. 
+Los datos generados con Spectronaut se cargaron en R y se procesaron con la función *preprocess_spectronaut*(), que elimina los grupos proteicos con abundancia nula en todas las muestras y sustituye los ceros restantes por NAs. 
 
 A continuación, se aplica la transformación logarítmica en base 2, que reduce el rango de las abundancias, estabiliza la varianza, acerca los datos a una distribución normal y facilita la interpretación del fold-change. Ya que un +1 indica que a la abundancia de una proteina en cierta comparación se duplica y por el contrario, un -1, que la abundancia es la mitad. Esta transformación se hace para cada abundancia de manera individual.
 
