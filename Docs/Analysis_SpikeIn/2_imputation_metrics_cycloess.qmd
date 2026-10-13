@@ -1,12 +1,13 @@
 La imputación de datos es necesaria para evitar la pérdida de información y realizar un análisis estadístico más realista.
 
-Dado que la deteccion de proteinas depende tanto de la muestra como de la sensibilidad del equipo de análisis, pueden aparecer datos como ausentes que realmente no lo son. Cuando esto ocurre, se dice que aparecen valores faltantes y se determinan como *NA* (En algunos casos, la máquina indica un valor cero que se controla en el paso de preprocesamiento de los datos crudos sustituyendo el cero por un *NA*).
+Dado que la detección de proteínas depende tanto de la muestra como de la sensibilidad del equipo de análisis, pueden aparecer como ausentes datos que realmente no lo son, es decir, proteínas presentes en la muestra que no llegan a detectarse. Cuando esto ocurre, se habla de valores faltantes y se denotan como *NA* (en algunos casos, el equipo indica un valor cero, que se controla en el paso de preprocesamiento de los datos crudos sustituyéndolo por un *NA*).
 
-Un valor puede ser ausente por dos motivos diferentes, aparecer a valores inferiores al límite de detección o por fallos de detección. Así, se determinan dos tipos de NAs: - MARs (Missing At Random): estos son los valores ausentes a causa de fallos en la detección. Un valor faltante en una replica de una condición en la que aparece en todas las réplicas menos una (umbral a determinar por el investigador) suele ser un valor ausente debido a un fallo en la detección. - MNAR (Missing Not At Random): valores ausentes debido a un nivel de abundancia muy bajo que es incapaz de detectar el equipo. Así, en este caso, no suelen aparecer valores de cuantificacion para ninguna de las replicas de una misma condición (pero si aparece en otras condiciones).
+Un valor puede estar ausente por dos motivos diferentes: encontrarse por debajo del límite de detección o producirse un fallo de detección. Así, se distinguen dos tipos de *NA*:
 
-Dado que a naturaleza de los valores ausentes no siempre es la misma, el manejo e imputación de valores no conviene hacerla de la misma manera. Poder seleccionar el mejor método de imputación de datos para cada tipo de valor ausente, es el objetivo de dicho paquete.
+- *MAR* (*Missing At Random*): valores ausentes a causa de fallos en la detección. Un valor faltante en una réplica de una condición en la que aparece en todas las réplicas menos una (umbral a determinar por el investigador) suele deberse a un fallo en la detección.
+- *MNAR* (*Missing Not At Random*): valores ausentes debidos a un nivel de abundancia tan bajo que el equipo no es capaz de detectarlo. En este caso, no suelen aparecer valores de cuantificación en ninguna de las réplicas de una misma condición, pero sí en otras condiciones.
 
-*FIX ME con la MP NB*
+Dado que la naturaleza de los valores ausentes no siempre es la misma, el manejo e imputación de los valores no conviene hacerlos de la misma manera. El objetivo del paquete es poder seleccionar el mejor método de imputación para cada tipo de valor ausente.
 
 ### Preparación de los datos
 
@@ -32,37 +33,35 @@ im_metr_cycloess <- imputation_metrics(
 
 ### Análisis de las métricas para selección del métodos de imputación
 
-Al igual que en los métodos de normalización, los métodos de imputacion cuentan con unas métricas para su evaluación. Así, de la misma manera se rankean los diferentes métodos con valores del 1 al número de métodos evaluados y promedia la posición.
+Al igual que en los métodos de normalización, los métodos de imputación cuentan con unas métricas para su evaluación. De la misma manera, se ordenan los diferentes métodos asignándoles una posición del 1 al número de métodos evaluados en cada métrica, y se promedian las posiciones obtenidas para calcular el rango medio (*Rank Mean*). Los métodos *zero*, *min* y *halfmin* no tienen valor en la métrica ACC OI, por lo que su rango medio se calcula solo con las métricas disponibles.
 
-NO APARECEN: - with -\> podria poner una media global para imputar? no tiene mucho sentido pero por ver lo que sale y comprobar que la puntuacion que sale es mala (o deberia serlo) - softhybrid -\> - none -\> no imputar no puede tener métrica de evaluacion
+Algunos métodos de imputación disponibles en el paquete no aparecen en la evaluación: *with*, *softhybrid* y *none*. En el caso de *none*, esto se debe a que no imputar no permite calcular métricas de evaluación.
 
-|   **Método**   | **NRMSE Rank** | **SOR Rank** | **PSS Rank** | **ACC OI Rank** | **Rank Mean** |
-|:----------|:----------:|:--------:|:--------:|:-----------:|:---------:|
-|    bpca    |     1      |    2     |    2     |      1      |   1.50    |
-| missForest |     2      |    4     |    1     |      2      |   2.25    |
-|   Impseq   |     3      |    3     |    4     |      3      |   3.25    |
-| Impseqrob  |     4      |    1     |    6     |      4      |   3.75    |
-|   nbavg    |     6      |    5     |    3     |      6      |   5.00    |
-|    mice    |     5      |    8     |    7     |      5      |   6.25    |
-|    knn     |     8      |    6     |    5     |      8      |   6.75    |
-|   limpa    |     7      |    7     |    8     |      7      |   7.25    |
-|    MLE     |     9      |    9     |    9     |      9      |   9.00    |
-|     PI     |     10     |    10    |    10    |     12      |   10.50   |
-|   MinDet   |     11     |    11    |    13    |     11      |   11.50   |
-|   QRILC    |     13     |    13    |    11    |     10      |   11.75   |
-|  MinProb   |     12     |    12    |    12    |     13      |   12.25   |
-|    zero    |     14     |    14    |    14    |     NA      |   14.00   |
-|    min     |     15     |    15    |    15    |     NA      |   15.00   |
-|  halfmin   |     16     |    16    |    16    |     NA      |   16.00   |
+|  **Método**  | **NRMSE** | **SOR** | **PSS** | **ACC OI** | **NRMSE Rank** | **SOR Rank** | **PSS Rank** | **ACC OI Rank** | **Rank Mean** |
+|:-------------|:---------:|:-------:|:-------:|:----------:|:--------------:|:------------:|:------------:|:---------------:|:-------------:|
+|   Impseq     |    0.10   |   7374  |   0.01  |    0.99    |       1        |      1       |      9       |        1        |      3.00     |
+|    bpca      |    0.10   |   7571  |   0.01  |    0.99    |       2        |      3       |      7       |        2        |      3.50     |
+|  Impseqrob   |    0.11   |   7487  |   0.01  |    0.99    |       3        |      2       |      8       |        3        |      4.00     |
+|   nbavg      |    0.13   |  11743  |   0.01  |    0.99    |       4        |      6       |      5       |        4        |      4.75     |
+|  missForest  |    0.16   |   9799  |   0.00  |    0.99    |       7        |      4       |      2       |        7        |      5.00     |
+|   limpa      |    0.20   |  11383  |   0.00  |    0.98    |       8        |      5       |      1       |        8        |      5.50     |
+|    mice      |    0.13   |  13493  |   0.01  |    0.99    |       5        |      8       |      6       |        5        |      6.00     |
+|    MLE       |    0.14   |  15193  |   0.00  |    0.99    |       6        |      9       |      3       |        6        |      6.00     |
+|    knn       |    0.24   |  13375  |   0.01  |    0.97    |       9        |      7       |      4       |        9        |      7.25     |
+|   MinDet     |    2.06   |  23604  |   0.03  |    0.04    |       11       |      11      |      12      |        11       |     11.25     |
+|  MinProb     |    2.06   |  23724  |   0.03  |    0.04    |       12       |      12      |      11      |        10       |     11.25     |
+|     PI       |    2.05   |  23563  |   0.03  |    0.01    |       10       |      10      |      13      |        13       |     11.50     |
+|   QRILC      |    2.58   |  27798  |   0.03  |    0.01    |       13       |      13      |      10      |        12       |     12.00     |
+|    min       |    4.03   |  30169  |   0.04  |     NA     |       14       |      14      |      16      |        NA       |     14.67     |
+|  halfmin     |    4.43   |  32324  |   0.04  |     NA     |       15       |      15      |      15      |        NA       |     15.00     |
+|    zero      |    6.21   |  34480  |   0.04  |     NA     |       16       |      16      |      14      |        NA       |     15.33     |
+
+: Tabla de métricas de imputación de valores cuando la normalización se lleva a cabo mediante *cycloess*. {#tbl-imp-metrics-spikein-cycloess}
 
 : Tabla de métricas de imputación de valores cuando la normalización se lleva a cabo mediante *cycloess*. {#tbl-imp-metrics-spikein-cycloess}
 
 ```{r metrics graph imp, fig.width = 10, fig.height = 10}
 im_metr_cycloess$metrics
-```
-
-```{r ranking opdea imp, fig.width = 12, fig.height = 10}
-im_metr_cycloess$ranking
 ```
 
 La imagen superior muestra que el mejor método de imputación de datos es *Impseq*, además de ser confirmado por tener el menor RankMean, en tres de las cuatro métricas tiene un valor de uno, es decir, tiene el valor más optimo de entre todos los métodos de imputación (@tbl-imp-metrics-spikein-cycloess).
