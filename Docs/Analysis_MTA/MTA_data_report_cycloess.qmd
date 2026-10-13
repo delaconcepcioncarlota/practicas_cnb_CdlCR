@@ -75,7 +75,7 @@ se_imp_MTA_cycloess <- im_prepare_se(preprocessed_data_MTA,
 imp_metrics_MTA_cycloess<- imputation_metrics(se_imp_MTA_cycloess,
                                 assay_name = "cycloess", #Normalization method
                                 pattern = "from_data")
-    ```
+```
 
 |   **Método**   | **NRMSE Rank** | **SOR Rank** | **PSS Rank** | **ACC OI_Rank** | **Rank Mean** |
 |:----------|:----------:|:--------:|:--------:|:-----------:|:---------:|
