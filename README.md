@@ -1,4 +1,4 @@
-# practicas_cnb_CdlCR
+# Prácticas del Máster de Bioinformática y Biología Computacional de la Universidad Autónoma de Madrid
 
 Quarto reports (HTML/PDF) documenting the analyses run with the NADIA package during the CNB internship.
 
