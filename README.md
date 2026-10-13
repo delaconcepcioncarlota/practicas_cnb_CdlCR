@@ -5,14 +5,18 @@ Quarto reports (HTML/PDF) documenting the analyses run with the NADIA package du
 ## Contenido
 
 ```
-FinalReports/   Informes finales renderizados (HTML y PDF)
+FinalReports/   Informes finales renderizados (HTML)
 Docs/           Archivos fuente de los informes
-├── *.qmd       Documentos Quarto
-├── data/       Datos de entrada usados por los qmd
+├── Analysis_SpikeIn    Archivos .qmd generados durante el análisis de los datos generados para el estudio
+├── Analysis_MTA/       Archivos .qmd generados durante el análisis de los datos con tratamiento de MTA
 └── pics/
-    ├── finalFigures/         Figuras finales que se llaman desde los qmd
-    ├── intermediateFigures/  Figuras intermedias
-    └── MP_panels.pptx          PPTX donde se montan los paneles
+    ├── finalFigures/         Figuras finales generadas para la memoria
+         ├── MTA_finalFigures/      Figuras finales asociadas al análisis de datos con tratamiento de MTA
+         └── SpikeIn_finalFigures/  Figuras finales asociadas al análisis de datos generados para el estudio
+    ├── intermediateFigures/  Figuras intermedias llamadas en los .qmd
+         ├── MTA_intermediateFigures/      Figuras intermedias asociadas al análisis de datos con tratamiento de MTA
+         └── SpikeIn_intermediateFigures/  Figuras intermedias asociadas al análisis de datos generados para el estudio
+    └── MP_panels.pptx        PPTX donde se montan los paneles
 ```
 
 ## Contexto
