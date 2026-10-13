@@ -85,7 +85,7 @@ Si bien el proceso de selección de método de normalización e imputación de l
 
 FIX: How normalisation methods are evaluated -\> across intra-cond 
 
-Los tres primeros permiten conseguir una menor var entre las bioreps de cada cond. Queremos que en el MAR la abundancia de un valor muy simnilar entre las 4 bioREPS. En Rank_Cor queremos que las replicas tengan mayor correlacion entre BIOREPS, que se parezcan más En Rank_Sep queremos que los % de los PC1 sea lo mmás alto posible para separar mejor las condiciones
+Los tres primeros permiten conseguir una menor var entre las bioreps de cada cond. Queremos que en el MAR la abundancia de un valor muy simnilar entre las 3 bioreps. En Rank_Cor queremos que las replicas tengan mayor correlacion entre BIOREPS, que se parezcan más En Rank_Sep queremos que los % de los PC1 sea lo mmás alto posible para separar mejor las condiciones
 
 ### Selección del método de imputación para valores MNAR
 
