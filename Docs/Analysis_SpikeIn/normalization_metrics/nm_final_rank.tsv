@@ -1,0 +1,13 @@
+Method	Rank_PCV	Rank_PMAD	Rank_PEV	Rank_Cor	Rank_Sep	Rank_Final
+cycloess	9	1	1	2	4	3.4
+vsn	1	3	2	1	11	3.6
+Rlr	3	2	3	10	3	4.2
+GlobalMean	6	6	4	6	1	4.6
+GlobalMedian	10	7	5	5	2	5.8
+meanNorm	5	5	6	9	5	6
+eqmedians	2	8	7	7	7	6.2
+quantile	7	4	9	3	8	6.2
+medianNorm	4	9	8	8	6	7
+quantile.robust	8	10	11	12	9	10
+log2	12	12	12	4	12	10.4
+MAD	11	11	10	11	10	10.6

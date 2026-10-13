@@ -1,0 +1,11 @@
+Assay	rank_nMCC	rank_G_mean	rank_pAUC_001	rank_pAUC_005	rank_pAUC_010	rank_final
+cycloess_Impseq_min	3	3	3	1	1	2.2
+cycloess_Impseq_zero	1	1	5	2.5	2.5	2.4
+cycloess_Impseq_halfmin	2	2	4	2.5	2.5	2.6
+cycloess_Impseq_MinDet	4	4	1	4	4	3.4
+cycloess_softHybrid_Impseq_min	6	6	2	5	5	4.8
+cycloess_Impseq_MinProb	5	5	6	6	6	5.6
+cycloess_Impseq	7	7	7	7	7	7
+cycloess_Impseq_PI	8	8	8	8	8	8
+cycloess_Impseq_QRILC	9	9	10	9	9	9.2
+cycloess_limpa	10	10	9	10	10	9.8

@@ -1,0 +1,4 @@
+Assay	Sensitivity	Specificity	Precision	NPV	F1	pAUC_005	Accuracy	MCC	Performance	nMCC	G_mean
+cycloess_Impseq_zero	0.7733	0.9586	0.914	0.8855	0.8326	0.8637	0.8916	0.7642	3.8333	0.8821	0.8581
+Rlr_Impseq_zero	0.7666	0.8817	0.8126	0.8776	0.7738	0.8311	0.8401	0.6678	3.3333	0.8339	0.815
+vsn_Impseq_zero	0.7733	0.8744	0.8149	0.8809	0.775	0.8564	0.8378	0.6699	3.1667	0.835	0.8142

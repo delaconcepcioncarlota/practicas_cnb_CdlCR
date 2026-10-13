@@ -1,0 +1,4 @@
+Assay	rank_nMCC	rank_G_mean	rank_pAUC_001	rank_pAUC_005	rank_pAUC_010	rank_final
+cycloess_Impseq_zero	1	1	1	1	1	1
+vsn_Impseq_zero	2	3	2	2	2	2.2
+Rlr_Impseq_zero	3	2	3	3	3	2.8

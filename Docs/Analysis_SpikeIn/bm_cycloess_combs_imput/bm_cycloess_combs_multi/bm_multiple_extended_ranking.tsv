@@ -1,0 +1,11 @@
+Assay	rank_Sensitivity	rank_Specificity	rank_Precision	rank_NPV	rank_F1	rank_pAUC_005	rank_Accuracy	rank_MCC	rank_Performance	rank_nMCC	rank_G_mean	rank_final
+cycloess_Impseq_zero	1	10	10	1	1	2.5	1	1	2.5	1	1	2.91
+cycloess_Impseq_halfmin	2	9	9	2	2	2.5	2	2.5	2.5	2	2	3.41
+cycloess_Impseq_min	3	8	8	3	3	1	3	2.5	2.5	3	3	3.64
+cycloess_Impseq_MinDet	4	7	6	4	4	4	4	4	6	4	4	4.64
+cycloess_softHybrid_Impseq_min	6	4	2	5	6	5	6	6	2.5	6	6	4.95
+cycloess_Impseq_MinProb	5	6	4	6	5	6	5	5	6	5	5	5.27
+cycloess_Impseq	7	5	5	7	7	7	7	7	6	7	7	6.55
+cycloess_Impseq_PI	8	3	3	8	8	8	8	8	8.5	8	8	7.14
+cycloess_Impseq_QRILC	9	2	7	9	9	9	9	9	8.5	9	9	8.14
+cycloess_limpa	10	1	1	10	10	10	10	10	10	10	10	8.36

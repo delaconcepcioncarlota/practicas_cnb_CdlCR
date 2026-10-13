@@ -335,8 +335,8 @@ knitr::kable(
 )
 ```
 
-Measure                                    | Value|
-|:------------------------------------------|-----:|
+| Measure                                   | Value|
+|:------------------------------------------|:-----:|
 |Unique proteins                            |  2097|
 |Protein--cluster associations              |  2580|
 |Proteins associated with multiple clusters |   483|
