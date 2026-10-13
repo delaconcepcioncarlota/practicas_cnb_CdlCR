@@ -32,8 +32,9 @@ Prácticas realizadas en el [Centro Nacional de Biotecnología (CNB-CSIC)](https
 
 | Informe | Descripción |
 |---|---|
-| [informe1.html](FinalReports/informe1.html) | [qué analiza] |
-| [informe_final.pdf](FinalReports/informe_final.pdf) | [resumen del trabajo completo] |
+| [Benchmarking_SpikeInProteins.html](FinalReports/Benchmarking_SpikeInProteins.html) | [Análisis de datos generados en el laboratorio con el objetivo de evaluar la capacidad de la herramienta] |
+| [MTA_data_report_cycloess.html](FinalReports/MTA_data_report_cycloess.html) | [resumen del trabajo completo] |
+| [MTA_data_report_vsn.html](FinalReports/MTA_data_report_vsn.html) | [resumen del trabajo completo] |
 
 ## Autoría
 
