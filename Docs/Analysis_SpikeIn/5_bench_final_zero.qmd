@@ -1,9 +1,3 @@
----
-title: "bench_final_zero"
-author: "Carlota de la Concepcion Ruiz"
-format: pdf
-editor: source
----
 ```{r expected fc and species final zero }
 #| echo: false
 #| eval: false

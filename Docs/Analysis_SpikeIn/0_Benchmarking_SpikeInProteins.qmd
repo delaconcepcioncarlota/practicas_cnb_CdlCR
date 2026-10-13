@@ -1,5 +1,5 @@
 ---
-title: "Análisis comparativo de una muestra con proteinas *spike-in*"
+title: "Análisis comparativo de una muestra con proteinas spike-in"
 author: "Carlota de la Concepción Ruiz"
 format: 
   html:
@@ -13,20 +13,19 @@ format:
             }
           </style>
 editor: source
---- 
+---
 
-# Diseño de muestra 
+# Diseño de muestra
 
-La muestra de referencia contiene proteínas humanas, bacterianas (*E.coli*) y de levadura (*S.cerevisiae*). De la muestra A a la D, las proteínas de *E.coli* aumentan y las de *S.cerevisiae* disminuyen hasta desaparecer (@tbl-composicion-muestras). La muestra D representa así una situación de presencia-ausencia, con un alto porcentaje de NAs que permite evaluar el tratamiento de los valores ausentes, el objetivo principal del paquete. 
+La muestra de referencia contiene proteínas humanas, bacterianas (*E.coli*) y de levadura (*S.cerevisiae*). De la muestra A a la D, las proteínas de *E.coli* aumentan y las de *S.cerevisiae* disminuyen hasta desaparecer (@tbl-composicion-muestras). La muestra D representa así una situación de presencia-ausencia, con un alto porcentaje de NAs que permite evaluar el tratamiento de los valores ausentes, el objetivo principal del paquete.
 
 ::: {style="width: 60%; margin: 0 auto;"}
-
 | *Muestra* | ***H. sapiens*** | ***E. coli*** | ***S. cerevisiae*** |
 |:---------:|:----------------:|:-------------:|:-------------------:|
-| *A*       |       80%        |      5%       |         15%         |
-| *B*       |       80%        |      10%      |         10%         |
-| *C*       |       80%        |      15%      |         5%          |
-| *D*       |       80%        |      20%      |         0%          |
+|    *A*    |       80%        |      5%       |         15%         |
+|    *B*    |       80%        |      10%      |         10%         |
+|    *C*    |       80%        |      15%      |         5%          |
+|    *D*    |       80%        |      20%      |         0%          |
 
 : **Composición de las muestras experimentales.** {#tbl-composicion-muestras}
 :::
@@ -34,7 +33,6 @@ La muestra de referencia contiene proteínas humanas, bacterianas (*E.coli*) y d
 La muestra se ha preparado extrayendo las proteinas de kits comerciales. Las proteínas humanas se han extraído de células de HeLa-CCL 2 (ATCC™), proteínas *E.coli* Strain HB101 K-12 (BioRad) y proteínas de *S.cerevisiae* (Promega). Se obtuvo el conjunto de proteínas a partir del mismo batch. Posteriormente, el tratamiento de las proteínas se realizó de manera independiente. Además, a la hora de aislar las proteínas, se distribuyeron de tal manera que el aislamiento de estas no fuera dependiente de la muestra, sino que, en cada fila, había muestras de distinto tipo. De esta manera se han generado 4 pseudo-replicas biológicas para cada condición.
 
 # Generación de datos mediante nanoLC-MS/MS y tratamiento con Spectronaut
-
 
 ## Adquisición de datos
 
@@ -48,14 +46,13 @@ Dada la presencia de péptidos compartidos, si un péptido se asocia a una prote
 
 # Análisis estadísitico comparativo de datos con proteínas *spike-in*
 
-Los datos generados con Spectronaut se cargaron en R y se procesaron con la función *preprocess_spectronaut*(), que elimina los grupos proteicos con abundancia nula en todas las muestras y sustituye los ceros restantes por NAs. 
+Los datos generados con Spectronaut se cargaron en R y se procesaron con la función *preprocess_spectronaut*(), que elimina los grupos proteicos con abundancia nula en todas las muestras y sustituye los ceros restantes por NAs.
 
 A continuación, se aplica la transformación logarítmica en base 2, que reduce el rango de las abundancias, estabiliza la varianza, acerca los datos a una distribución normal y facilita la interpretación del fold-change. Ya que un +1 indica que a la abundancia de una proteina en cierta comparación se duplica y por el contrario, un -1, que la abundancia es la mitad. Esta transformación se hace para cada abundancia de manera individual.
 
 Aunque se realiza como primer paso, algunos métodos de normalización parten de los datos transformados y otros de los crudos. Después se normalizan los datos para que las cuantificaciones entre muestras sean comparables, ya que el espectrómetro devuelve abundancias que dependen de la cantidad total de proteína cargada, de los errores volumétricos y de la sensibilidad del cromatógrafo. Finalmente se imputan los valores ausentes según su causa, lo que permite aplicar la prueba estadística con limma o [limpa](https://doi.org/10.1101/2025.04.28.651125) sin perder grupos proteicos.
 
-Para seleccionar el método de normalización, NADIA combina las métricas de [PRONE](https://doi.org/10.1093/bib/bbaf201) (PCV, PMAD, PEV y correlación intragrupo), que evalúan la similitud de las abundancias dentro de un grupo, con una métrica de separación que mide cuánto difieren las abundancias entre condiciones. Para seleccionar el método de imputación se emplean las métricas de [NAguideR](https://doi.org/10.1093/nar/gkaa498), que generan un subconjunto de datos completos, introducen NAs aleatorios, imputan con cada método y comparan los valores imputados con los reales. Como estas métricas solo evalúan los métodos típicos de MAR, la función imputation_metrics sirve para elegir el método MAR pero no el MNAR, que requiere un análisis comparativo posterior.
-Cuando se cuenta con proteínas spike-in o se conoce el resultado, ese análisis se realiza con benchmarking_proteomics, que permite evaluar de forma simultánea distintos métodos de normalización e imputación una vez indicadas en process_proteomics las comparaciones que se desean analizar. El análisis devuelve el número de verdaderos positivos (TP), verdaderos negativos (TN), falsos positivos (FP) y falsos negativos (FN), de modo que se selecciona la combinación con más TP y menos FP. Un método híbrido, que impute según la naturaleza de cada NA, es preferible a uno único, porque imputar lo mismo en todos los casos elevaría el número de resultados falsos.
+Para seleccionar el método de normalización, NADIA combina las métricas de [PRONE](https://doi.org/10.1093/bib/bbaf201) (PCV, PMAD, PEV y correlación intragrupo), que evalúan la similitud de las abundancias dentro de un grupo, con una métrica de separación que mide cuánto difieren las abundancias entre condiciones. Para seleccionar el método de imputación se emplean las métricas de [NAguideR](https://doi.org/10.1093/nar/gkaa498), que generan un subconjunto de datos completos, introducen NAs aleatorios, imputan con cada método y comparan los valores imputados con los reales. Como estas métricas solo evalúan los métodos típicos de MAR, la función imputation_metrics sirve para elegir el método MAR pero no el MNAR, que requiere un análisis comparativo posterior. Cuando se cuenta con proteínas spike-in o se conoce el resultado, ese análisis se realiza con benchmarking_proteomics, que permite evaluar de forma simultánea distintos métodos de normalización e imputación una vez indicadas en process_proteomics las comparaciones que se desean analizar. El análisis devuelve el número de verdaderos positivos (TP), verdaderos negativos (TN), falsos positivos (FP) y falsos negativos (FN), de modo que se selecciona la combinación con más TP y menos FP. Un método híbrido, que impute según la naturaleza de cada NA, es preferible a uno único, porque imputar lo mismo en todos los casos elevaría el número de resultados falsos.
 
 [softHybrid](doi.org/10.64898/2026.01.13.699212)
 
@@ -90,15 +87,13 @@ Finalmente, dado se han seleccionado los métodos *zero* y *min* como los más a
 
 {{< include 6_resultados_bm_spikein.qmd >}}
 
-
-
 # Discusión y Conclusiones.
 
-La veracidad de los resultados depende de los métodos de normalización e imputación seleccionados. Evaluar la capacidad de los diferentes métodos de devolver el mayor número de verdaderos positivos y el menor número de falsos positivos, es crucial para la posterior interpretación funcional. Se ha observado que la selección de un método u otro puede suponer una diferencia en el resultado que se obtiene, dando lugar a una interpretación funcional errónea. Por ello, es conveniente analizar como de relevantes son las proteínas diferenciales para cada condición mediante un diagrama de Venn que demuestre que aquellas proteínas encontradas como diferenciales, realmente son relevantes biológicamente y no son artefactos causados por la manipulación de los datos. 
+La veracidad de los resultados depende de los métodos de normalización e imputación seleccionados. Evaluar la capacidad de los diferentes métodos de devolver el mayor número de verdaderos positivos y el menor número de falsos positivos, es crucial para la posterior interpretación funcional. Se ha observado que la selección de un método u otro puede suponer una diferencia en el resultado que se obtiene, dando lugar a una interpretación funcional errónea. Por ello, es conveniente analizar como de relevantes son las proteínas diferenciales para cada condición mediante un diagrama de Venn que demuestre que aquellas proteínas encontradas como diferenciales, realmente son relevantes biológicamente y no son artefactos causados por la manipulación de los datos.
 
-Por otro lado, se ha observado que establecer un filtro de logFC dependiente del conjunto de datos empleado es crucial. Esto permite eliminar un alto número de falsos positivos manteniendo los grupos proteicos que se expresan de manera diferencial de manera real. 
+Por otro lado, se ha observado que establecer un filtro de logFC dependiente del conjunto de datos empleado es crucial. Esto permite eliminar un alto número de falsos positivos manteniendo los grupos proteicos que se expresan de manera diferencial de manera real.
 
-Si bien esto no es posible cuando los datos a analizar son reales, dado que no contamos con proteínas spike-in, tras analizar diferentes conjuntos de datos, se puede ir conociendo que método de normalización o imputación podría ser más adecuado para el análisis de datos reales. Como, por ejemplo, se ha observado que, en ambos casos, el método cycloess tiende a devolver un bajo número de falsos positivos. 
+Si bien esto no es posible cuando los datos a analizar son reales, dado que no contamos con proteínas spike-in, tras analizar diferentes conjuntos de datos, se puede ir conociendo que método de normalización o imputación podría ser más adecuado para el análisis de datos reales. Como, por ejemplo, se ha observado que, en ambos casos, el método cycloess tiende a devolver un bajo número de falsos positivos.
 
 # Referencias Bibliográficas.
 

@@ -1,10 +1,3 @@
----
-title: "Benchmarking Multiple normalization"
-author: "Carlota de la Concepción Ruiz"
-format: html
-editor: source
----
-
 ```{r loading NADIA library 1_norm}
 #| results: hide
 #| message: false
@@ -17,7 +10,17 @@ Para analizar el efecto de la normalización frente a la no normalización, se d
 
 ### Obtencion de valores métricos para la selección del método de normalización
 
-Con el objetivo de poder evaluar de manera manual cuales son los mejores métodos de normalizacion, se han desarrollado varias funciones: - La funcion *nm_prepare_se* extrae de los metadatos y los datos de anotacion de proteinas necesarios para generar la matriz filtrada, sustituye los ceros por NA y genera los objetos SE crudo y con los datos normalizados por log2. - La funcion *normalization_metrics* genera un ranking tras evaluar los diferentes métodos de normalizacion por los parámetros determinados: - Rank_PCV: Evalúa el coeficiente de variacion para cada proteina en cada concidion - Rank_PMAD - Rank_PEV: - Rank_Cor: - Rank_Sep Así genera un Rank_final con la media de todas las posiciones. Dado que en funcion del la métrica el valor optimo tiene que tomar un valor mayor o menor, se ha estabelcido que el mejor método, tomará el valor de uno (en el caso de Rank_PCV, tomará el valor de 1 el método que de el menor valor para PCV mientras que en el caso de Rank_Cor, tomará el valor de 1 el método que obtenga el mayor valor para Cor). Así, al promediar el valor final, se obtiene que el valor con Rank_final, será el más optimo dado que ha sifo el que ha obtenido menores valores para las diferentes métricas.
+Con el objetivo de poder evaluar de manera manual cuales son los mejores métodos de normalizacion, se han desarrollado varias funciones: 
+
+- La funcion *nm_prepare_se* extrae de los metadatos y los datos de anotacion de proteinas necesarios para generar la matriz filtrada, sustituye los ceros por NA y genera los objetos SE crudo y con los datos normalizados por log2. 
+- La funcion *normalization_metrics* genera un ranking tras evaluar los diferentes métodos de normalizacion por los parámetros determinados: 
+  - Rank_PCV: Evalúa el coeficiente de variacion para cada proteina en cada concidion 
+  - Rank_PMAD 
+  - Rank_PEV: 
+  - Rank_Cor: 
+  - Rank_Sep Así genera un Rank_final con la media de todas las posiciones. 
+  
+Dado que en funcion del la métrica el valor optimo tiene que tomar un valor mayor o menor, se ha estabelcido que el mejor método, tomará el valor de uno (en el caso de Rank_PCV, tomará el valor de 1 el método que de el menor valor para PCV mientras que en el caso de Rank_Cor, tomará el valor de 1 el método que obtenga el mayor valor para Cor). Así, al promediar el valor final, se obtiene que el valor con Rank_final, será el más optimo dado que ha sifo el que ha obtenido menores valores para las diferentes métricas.
 
 ```{r normalization methods}
 #| results: hide

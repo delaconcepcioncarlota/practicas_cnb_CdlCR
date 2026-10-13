@@ -1,9 +1,3 @@
----
-title: "3_cycloess_combs_imputation"
-author: "Carlota de la Concepcion Ruiz"
-format: pdf
-editor: source
----
 Como se ha indicado anteriormente, la comparación estadística requiere los valores esperados de los cambios. Además, podemos proporcionar la naturaleza de cada proteina. 
 
 ### Valores esperados de la tasa de cambio

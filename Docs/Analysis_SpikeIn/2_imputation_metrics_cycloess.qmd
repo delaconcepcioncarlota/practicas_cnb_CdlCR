@@ -1,10 +1,3 @@
----
-title: "Análisis de los métodos de imputacion de valores normalizando con cycloess"
-author: "Carlota de la Concepción Ruiz"
-format: pdf
-editor: source
----
-
 La imputación de datos es necesaria para evitar la pérdida de información y realizar un análisis estadístico más realista.
 
 Dado que la deteccion de proteinas depende tanto de la muestra como de la sensibilidad del equipo de análisis, pueden aparecer datos como ausentes que realmente no lo son. Cuando esto ocurre, se dice que aparecen valores faltantes y se determinan como *NA* (En algunos casos, la máquina indica un valor cero que se controla en el paso de preprocesamiento de los datos crudos sustituyendo el cero por un *NA*).

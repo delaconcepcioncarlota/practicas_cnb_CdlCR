@@ -1,10 +1,3 @@
----
-title: "Resultados del Benchmarking con proteinas Spike-In"
-author: "Carlota de la Concepción Ruiz"
-format: html
-editor: source
----
-
 Con el objetivo de probar la herramienta, entender su funcionamiento y la ¿?utilidad¿? de realizar un benchmarking con proteinas Spike-In, se ha generado un conjunto de datos \*\*\* como se ha explicado en la metodología.
 
 Para ello, se ha llevado a cabo el análisis de las métricas de normalización a traves de las tablas y gráficos que se generan, entendiendo que indica cada métrica y su aplicación.
@@ -23,13 +16,13 @@ De la misma manera, esto se ve reforzado por los gráficos de barras (@fig-subD)
 
 ::: {#fig-venn-conf-staked layout-ncol="2"}
 
-![](./bm_final/deepvenn_mnar_min.png){#fig-subA}
+![](../pics/intermediateFigures/SpikeIn_intermediateFigures/deepvenn_mnar_min.png){#fig-subA}
 
-![](./bm_final/bm_final_multi/bm_multiple_confusion_stacked.png){#fig-subB}
+![](../pics/intermediateFigures/SpikeIn_intermediateFigures//bm_multiple_confusion_stacked_min.png){#fig-subB}
 
-![](./bm_final_zero/deepvenn_mnar_zero.png){#fig-subC}
+![](../pics/intermediateFigures/SpikeIn_intermediateFigures/deepvenn_mnar_zero.png){#fig-subC}
 
-![](./bm_final_zero/bm_final_zero_multi/bm_multiple_confusion_stacked.png){#fig-subD}
+![](../pics/intermediateFigures/SpikeIn_intermediateFigures/bm_multiple_confusion_stacked_zero.png){#fig-subD}
 
 **Gráficos comparativos del efecto del uso de diferentes métodos de normalización e imputación de valores para un mismo conjunto de datos.**. **A.** Diagrama de Venn de las proteinas diferencialmente expresadas de manera significativa entre los diferentes métodos de normalización y la posterior imputación consistente y uniforme usando el método de imputacion Impseq para valores MAR y el método min para valores MNAR. Los diferentes colores corresponden a los diferentes métodos de normalizacion. **B.** Gráfico de barras comparativo entre las diferentes condicinoes experimentales egún el método de normalizacin aplicado. La estrategia de imputacion se ha mantenido constante de acuerdo con los resultados del banchmarking realizado, utilizando el método de imputacion Impseq para valores MAR y el método min para valores MNAR. **C.** Diagrama de Venn de las proteinas diferencialmente expresadas de manera significativa entre los diferentes métodos de normalización y la posterior imputación consistente y uniforme usando el método de imputacion Impseq para valores MAR y el método zero para valores MNAR. **D.** Gráfico de barras comparativo entre las diferentes condicinoes experimentales egún el método de normalizacin aplicado. La estrategia de imputacion se ha mantenido constante de acuerdo con los resultados del banchmarking realizado, utilizando el método de imputacion Impseq para valores MAR y el método zero para valores MNAR.
 :::
@@ -40,9 +33,9 @@ Esto se debe a que, sin filtrar según el Fold-Change, un alto número de las pr
 
 ::: {#fig-tables-logFC layout-ncol="2"}
 
-![Valores MNAR imputados mediante zero](./tabla_conteos_filtroFC_zero_pastel.png){#fig-conteo-zero}
+![Valores MNAR imputados mediante zero](../pics/intermediateFigures/SpikeIn_intermediateFigures/tabla_conteos_filtroFC_zero_pastel.png){#fig-conteo-zero}
 
-![Valores MNAR imputados mediante min](./tabla_conteos_filtroFC_min_pastel.png){#fig-conteo-min}
+![Valores MNAR imputados mediante min](../pics/intermediateFigures/SpikeIn_intermediateFigures/tabla_conteos_filtroFC_min_pastel.png){#fig-conteo-min}
 
 **Tabla de cuantificación de verdaderos positivos, verdaderos negativos, falsos positivos y falsos negativos.**
 :::
@@ -51,9 +44,9 @@ Al extraer las proteinas con un |logFC| > 0.2 y un p-valor ajustado < 0.05, se o
 
 ::: {#fig-venn-diag-logFC layout-ncol="2"}
 
-![VennDiagram zero logFC](./bm_final_zero/deepvenn_mnar_zero_logFC.png){#fig-venn-zero-logFC}
+![VennDiagram zero logFC](../pics/intermediateFigures/SpikeIn_intermediateFigures/deepvenn_mnar_zero_logFC.png){#fig-venn-zero-logFC}
 
-![VennDiagram min logFC](./bm_final_min/deepvenn_mnar_min_logFC.png){#fig-venn-min-logFC}
+![VennDiagram min logFC](../pics/intermediateFigures/SpikeIn_intermediateFigures/deepvenn_mnar_min_logFC.png){#fig-venn-min-logFC}
 
 **Diagramas de Venn para las proteinas diferencialmente expresadas con un valor de logaritmo en base dos una tasa de cambio superior al 0.2 e inferior al 0.2**
 :::
@@ -62,7 +55,7 @@ Al extraer las proteinas con un |logFC| > 0.2 y un p-valor ajustado < 0.05, se o
 
 Se obtiene el pattern profiler para el conjunto de proteinas diferenciales obtenidas mediante normalización por cycloess, ya que es el método que posteriormente devuelve menos falsos positivos. El método de imputación de valores ausentes MAR será Impseq y el de MNAR es zero. Se ha ecigido que el mínimo de pertenencia a un cluster debe ser superior a 0.7
 
-![Pattern profile de las proteinas expresadas de manera diferencial en las diferentes muestras](./Docs/pics/intermediateFigures/SpikeIn_intermediateFigures/Pattern_prof_SpikeIn.png){#fig-pattern-prof-combo}
+![Pattern profile de las proteinas expresadas de manera diferencial en las diferentes muestras](../pics/intermediateFigures/SpikeIn_intermediateFigures/Pattern_prof_SpikeIn.png){#fig-pattern-prof-combo}
 
 Al realizar el perfil de patrones que siguen las proteinas, la funcion `pattern_profiler_analysis` determina que el número de clusters óptimo es 3. Así, al analizar el cambio de manera conjunta (FIX ME se pueden observar mapas interactivos individuales en el repositorio) se ve que el cluster 1 está compuesto por proteinas con baja abundancia en la muestra A y va aumentando el valor de z-score hasta la muestra D. Este cluster podría estar altamente representado por proteinas pertenencientes a *E.coli* dada la naturaleza de preparación de la muestra. Para el cluster 2, la tendencia es diferente y poco intuitiva ya que, la tasa de cambio se mantiene constante entre las muestras A y B, cae para la muestra C y de nuevo el z-score aumenta en la muestra D. Finalmente, el cluster 3 podría ser el que contenga las proteinas correspondientes a la levadura ya que, de manera progresiva, el valor de z-score disminuye.
 
