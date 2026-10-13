@@ -167,7 +167,6 @@ Al generar el mapa de calor en funcion de los clusters que aparecen por naturale
 #| fig-width: 12
 #| fig-height: 15
 #| warning: false
-#| 
 
 proteomics_heatmap(
   MTA_processed_data_cycloess_lastMNAR$PCA_Input,
