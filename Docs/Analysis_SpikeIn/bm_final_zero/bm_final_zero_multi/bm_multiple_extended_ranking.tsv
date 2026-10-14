@@ -1,0 +1,4 @@
+Assay	rank_Sensitivity	rank_Specificity	rank_Precision	rank_NPV	rank_F1	rank_pAUC_005	rank_Accuracy	rank_MCC	rank_Performance	rank_nMCC	rank_G_mean	rank_final
+cycloess_Impseq_zero	1.5	1	1	1	1	1	1	1	1	1	1	1.05
+vsn_Impseq_zero	1.5	3	2	2	2	2	3	2	3	2	3	2.32
+Rlr_Impseq_zero	3	2	3	3	3	3	2	3	2	3	2	2.64

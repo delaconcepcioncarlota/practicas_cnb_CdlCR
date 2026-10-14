@@ -1,0 +1,11 @@
+Assay	nMCC	G_mean	pAUC_001	pAUC_005	pAUC_010
+cycloess_Impseq	0.8842	0.8632	0.8196	0.8696	0.887
+cycloess_Impseq_QRILC	0.8418	0.8034	0.73740000000000006	0.8027	0.832
+cycloess_Impseq_MinDet	0.8726	0.8573	0.8103	0.8564	0.8728
+cycloess_Impseq_MinProb	0.8703	0.8546	0.8012	0.8508	0.8688
+cycloess_Impseq_PI	0.853	0.8245	0.7606	0.8192	0.8434
+cycloess_Impseq_min	0.8676	0.8462	0.8021	0.8532	0.869
+cycloess_Impseq_halfmin	0.8675	0.8462	0.8012	0.8532	0.869
+cycloess_Impseq_zero	0.8678	0.8466	0.7996	0.8532	0.869
+cycloess_softHybrid_Impseq_min	0.8914	0.873	0.8306	0.8759	0.8919
+cycloess_limpa	0.8493	0.8025	0.7586	0.8202	0.8419
