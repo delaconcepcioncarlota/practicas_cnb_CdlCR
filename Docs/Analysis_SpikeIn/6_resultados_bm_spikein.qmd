@@ -55,7 +55,8 @@ Al extraer las proteinas con un |logFC| > 0.2 y un p-valor ajustado < 0.05, se o
 
 Se obtiene el pattern profiler para el conjunto de proteinas diferenciales obtenidas mediante normalización por cycloess, ya que es el método que posteriormente devuelve menos falsos positivos. El método de imputación de valores ausentes MAR será Impseq y el de MNAR es zero. Se ha ecigido que el mínimo de pertenencia a un cluster debe ser superior a 0.7.
 
-```{r pattern profiler, results = false}
+```{r pattern profiler}
+#| results: hide
 
 pp_cycloess_Impseq_zero <- process_proteomics(preproc_data_spikein,
                                        norm_method = "cycloess",
