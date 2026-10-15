@@ -42,7 +42,7 @@ Prácticas realizadas en el [Centro Nacional de Biotecnología (CNB-CSIC)](https
 
 ## Autoría
 
-Carlota de la Concepción Ruiz - delaconcepcion.carlota
+[Carlota de la Concepción Ruiz](https://github.com/delaconcepcioncarlota)
 
 ## Dirección
 
