@@ -5,6 +5,7 @@ Quarto reports (HTML/PDF) documenting the analyses run with the NADIA package du
 ## Contenido
 
 ```
+[!TIP]
 FinalReports/   Informes finales renderizados (HTML)
 Docs/           Archivos fuente de los informes
 ├── Analysis_SpikeIn    Archivos .qmd generados durante el análisis de los datos generados para el estudio
