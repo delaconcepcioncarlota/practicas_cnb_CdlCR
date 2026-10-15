@@ -53,7 +53,34 @@ Al extraer las proteinas con un |logFC| > 0.2 y un p-valor ajustado < 0.05, se o
   
 ### Pattern profiler
 
-Se obtiene el pattern profiler para el conjunto de proteinas diferenciales obtenidas mediante normalización por cycloess, ya que es el método que posteriormente devuelve menos falsos positivos. El método de imputación de valores ausentes MAR será Impseq y el de MNAR es zero. Se ha ecigido que el mínimo de pertenencia a un cluster debe ser superior a 0.7
+Se obtiene el pattern profiler para el conjunto de proteinas diferenciales obtenidas mediante normalización por cycloess, ya que es el método que posteriormente devuelve menos falsos positivos. El método de imputación de valores ausentes MAR será Impseq y el de MNAR es zero. Se ha ecigido que el mínimo de pertenencia a un cluster debe ser superior a 0.7.
+
+```{r pattern profiler, results = false}
+
+pp_cycloess_Impseq_zero <- process_proteomics(preproc_data_spikein,
+                                       norm_method = "cycloess",
+                                       imp_method = "combo",
+                                       mar_method = "Impseq",
+                                       mnar_method = "zero",
+                                       verbose = FALSE)
+
+pattern_profile_zero <- pattern_profiler_analysis(
+                            se_proc = pp_cycloess_Impseq_zero$se_proc,
+                            DEPs_results = pp_cycloess_Impseq_zero$DEPs_results,
+                            assay_name = "Impseq_zero",
+                            filter_mode = "any",
+                            c_range = 2:8,
+                            verbose = FALSE)
+
+centroid_plot <- cluster_centroids_highchart(
+  pattern_profile_zero$long_output,
+  conditions = pattern_profile_zero$conditions,
+  min_membership = 0.70,
+  centroid_summary = "median",
+  title = "Pattern Profiler cluster centroids"
+)
+
+```
 
 ![Pattern profile de las proteinas expresadas de manera diferencial en las diferentes muestras](../pics/intermediateFigures/SpikeIn_intermediateFigures/Pattern_prof_SpikeIn.png){#fig-pattern-prof-combo}
 
