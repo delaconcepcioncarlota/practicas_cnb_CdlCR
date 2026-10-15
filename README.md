@@ -30,7 +30,7 @@ Prácticas realizadas en el [Centro Nacional de Biotecnología (CNB-CSIC)](https
 
 ## Workflow
 
-![**Workflow for proteomics data analysis using the NADIA package.** Steps carried out with commercial software are shown in green. The processing steps performed using the NADIA package are represented in blue. At the bottom of each step, the function through which results were obtained for that procedure is indicated.](Docs\pics\finalFigures\ProteomicsWNADIA_ss.png){#fig-workflow}
+![**Workflow for proteomics data analysis using the NADIA package.** Steps carried out with commercial software are shown in green. The processing steps performed using the NADIA package are represented in blue. At the bottom of each step, the function through which results were obtained for that procedure is indicated.](Docs/pics/finalFigures/ProteomicsWNADIA_ss.png){#fig-workflow}
 
 ## Informes
 
