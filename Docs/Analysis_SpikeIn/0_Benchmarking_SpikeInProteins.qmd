@@ -79,7 +79,7 @@ preproc_data_spikein <- preprocess_spectronaut("../../../Benchmarking_data.tsv",
 
 ## Análisis comparativo final entre los métodos de normalización seleccionadas
 
-Finalmente, dado se han seleccionado los métodos *zero* y *min* como los más adecuados para imputar valores MNAR. Se mostrará el procedimiento y código del análisis comparativo cuando los valores MNAR se imputan con *zero*. Para concluir y ver el efecto del método de imputacion MNAR real, se van a mostrar los resultados cuando el método *min* es el seleccionado. El código se puede ver en [GitHub](https://github.com/delaconcepcioncarlota-cmd/practicas_cnb_CdlCR.git).
+Finalmente, dado se han seleccionado los métodos *zero* y *min* como los más adecuados para imputar valores MNAR. Se mostrará el procedimiento y código del análisis comparativo cuando los valores MNAR se imputan con *zero*. Para concluir y ver el efecto del método de imputacion MNAR real, se van a mostrar los resultados cuando el método *min* es el seleccionado. El código se puede ver en [GitHub](https://github.com/delaconcepcioncarlota/practicas_cnb_CdlCR.git).
 
 {{< include 5_bench_final_zero.qmd >}}
 
