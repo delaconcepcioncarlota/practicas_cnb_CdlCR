@@ -1,6 +1,6 @@
 ---
 title: "Análisis comparativo de una muestra con proteinas de referencia"
-subtile: "Material de apoyo de la memoria de prácticas"
+subtitle: "Material de apoyo de la memoria de prácticas"
 author: "Carlota de la Concepción Ruiz"
 format: 
   html:
@@ -90,22 +90,18 @@ Solo se muestra el código al evaluar los métodos de imputación de valores MAR
 
 ## Análisis comparativo final entre los métodos de normalización seleccionadas
 
-Finalmente, dado se han seleccionado los métodos *zero* y *min* como los más adecuados para imputar valores MNAR. Se mostrará el procedimiento y código del análisis comparativo cuando los valores MNAR se imputan con *zero*. Para concluir y ver el efecto del método de imputacion MNAR real, se van a mostrar los resultados cuando el método *min* es el seleccionado. El código se puede ver en [GitHub](https://github.com/delaconcepcioncarlota/practicas_cnb_CdlCR.git).
+Finalmente, dado se han seleccionado los métodos *zero* y *min* como los más adecuados para imputar valores MNAR. Se mostrará el procedimiento y código del análisis comparativo cuando los valores MNAR se imputan con *zero*. El código del efecto de imputar los valores MNAR con el método *min* se puede ver en el archivo *4_bench_final_min.qmd* en el repositorio de [GitHub](https://github.com/delaconcepcioncarlota/practicas_cnb_CdlCR.git).
 
-{{< include 5_bench_final_zero.qmd >}}
+{{< include 4_bench_final_zero.qmd >}}
 
 # Resultados
 
-{{< include 6_resultados_bm_spikein.qmd >}}
+{{< include 5_resultados_bm_spikein.qmd >}}
 
 # Discusión y Conclusiones.
 
-La veracidad de los resultados depende de los métodos de normalización e imputación seleccionados. Evaluar la capacidad de los diferentes métodos de devolver el mayor número de verdaderos positivos y el menor número de falsos positivos, es crucial para la posterior interpretación funcional. Se ha observado que la selección de un método u otro puede suponer una diferencia en el resultado que se obtiene, dando lugar a una interpretación funcional errónea. Por ello, es conveniente analizar como de relevantes son las proteínas diferenciales para cada condición mediante un diagrama de Venn que demuestre que aquellas proteínas encontradas como diferenciales, realmente son relevantes biológicamente y no son artefactos causados por la manipulación de los datos.
+La fiabilidad de los resultados depende de los métodos de normalización e imputación seleccionados, ya que una elección inadecuada puede alterar la matriz de proteínas diferenciales y conducir a una interpretación funcional errónea. Por ello, es crucial evaluar la capacidad de cada método para maximizar el número de verdaderos positivos y acotar al máximo el de falsos positivos. Los diagramas de Venn ayudan a valorar la solidez de las proteínas diferenciales, ya que las que se muestran independientes a los métodos empleados tienen menos probabilidad de ser artefactos del procesado de los datos. Además, establecer un filtro de logFC dependiente del conjunto de datos permite excluir un alto número de falsos positivos sin perder los grupos proteicos realmente diferenciales.
 
-Por otro lado, se ha observado que establecer un filtro de logFC dependiente del conjunto de datos empleado es crucial. Esto permite eliminar un alto número de falsos positivos manteniendo los grupos proteicos que se expresan de manera diferencial de manera real.
+Esta evaluación directa solo es posible con presencia de proteínas de referencia. En datos reales, la comparación entre varios conjuntos permite orientar la elección del método. Así, *cycloess* tiende a devolver pocos falsos positivos tanto en la muestra de referencia, donde sus regiones de falsos positivos son menores, como en los datos reales, donde genera menos grupos proteicos no solapantes. 
 
-Si bien esto no es posible cuando los datos a analizar son reales, dado que no contamos con proteínas spike-in, tras analizar diferentes conjuntos de datos, se puede ir conociendo que método de normalización o imputación podría ser más adecuado para el análisis de datos reales. Como, por ejemplo, se ha observado que, en ambos casos, el método cycloess tiende a devolver un bajo número de falsos positivos.
-
-# Referencias Bibliográficas.
-
-# Anexos
+# Referencias Bibliográficas

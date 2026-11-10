@@ -52,16 +52,16 @@ making_names <- function(combin){
   if(combin$imp_meth ==  "combo"){
     paste(combin$norm_meth, combin$mar_meth, combin$mnar_meth, sep="_")
   }
-  #Non imputation
+  # Sin imputación
   else if(combin$imp_meth == "none"){
     paste(combin$norm_meth, "none", sep="_")
   }
-  # SoftHybrid method
+  # Método SoftHybrid
   else if(combin$imp_meth == "softHybrid"){
     paste(combin$norm_meth, "softHybrid", 
           combin$mar_meth, combin$mnar_meth, sep="_")
   }
-  #limpa method
+  # Método limpa (implica analisis estadístico limpa)
   else if(combin$imp_meth == "limpa"){
     paste(combin$norm_meth, combin$imp_meth, sep = "_")
   }
@@ -74,8 +74,10 @@ making_names <- function(combin){
 
 ### Bucle de procesamiento con benchmarking unico
 
+Al igual que en el caso anterior, se realiza el análisis estadístico y comparativo para cada comparación de métodos de normalización e imputación.
+
 ```{r bm final zero, warning = FALSE}
-#Lists to store benchmarking information
+# Lists to store benchmarking information
 bm_final_zero_list <- list()
 
 OpDEA_final_zero_list <- list()
@@ -148,31 +150,46 @@ bm_multi_results_final_zero <- benchmarking_multiple(
 
 ## Gráficos y comparaciones
 
-```{r ranking bars bm final zero}
-bm_multi_results_final_zero$gg_ranking_bars_mean
-```
+Según la gráfica  donde s muestra la posición según las métricas OpDEA @fig-ext-opdea, al igual que en la @fig-ext-rank-bars, el mejor método de imputación de valores cuando la normalización se realiza mediante final, es la combinación de Impseq y zero. El método Impseq se usa para imputar valores en los valores ausentes aleatorios mientras que el método min se utiliza en los valores ausentes no aleatorios.
 
-Según la gráfica superior, donde se muestra la posición según las métricas OpDEA, al igual que en la @fig-ext-rank-bars, el mejor método de imputación de valores cuando la normalización se realiza mediante final, es la combinación de Impseq y zero. El método Impseq se usa para imputar valores en los valores ausentes aleatorios mientras que el método min se utiliza en los valores ausentes no aleatorios.
+::: {#fig-metrics-zero layout-ncol=2}
 
-## FIX
+![Gráic de barras de las métricas OpDea](./bm_final_zero/bm_final_zero_multi/bm_multiple_ranking_bars_mean.png){#fig-ext-opdea}
 
 ![Gráfico de barras de las métricas](./bm_final_zero/bm_final_zero_multi/bm_multiple_extended_ranking_bars.png){#fig-ext-rank-bars}
 
+**Gráficos de barras al imputar valores con *Impseq* y *zero***
 
-```{r roc ZOOm extenden final zero}
-bm_multi_results_final_zero$gg_roc_zoom_by_comp
-```
+::: 
+
+Al analizar las curvas ROC con ampliación @fig-roc-zoom-zero, se observa que la capacidad de limitar el número de falsos positivos es muy dependiente de la comparación.
+
+::: {#fig-roc-zoom-zero layout-ncol=2}
+
+![D vs C](./bm_final_zero/bm_final_zero_multi/by_comparison/bm_roc_zoom_D-C.png){#fig-roc-zoom-zero-DC}
+
+![B vs A](./bm_final_zero/bm_final_zero_multi/by_comparison/bm_roc_zoom_B-A.png){#fig-roc-zoom-zero-BA}
+
+![C vs A](./bm_final_zero/bm_final_zero_multi/by_comparison/bm_roc_zoom_C-A.png){#fig-roc-zoom-zero-CA}
+
+![C vs B](./bm_final_zero/bm_final_zero_multi/by_comparison/bm_roc_zoom_C-B.png){#fig-roc-zoom-zero-CB}
+
+![D vs A](./bm_final_zero/bm_final_zero_multi/by_comparison/bm_roc_zoom_D-A.png){#fig-roc-zoom-zero-DA}
+
+![D vs B](./bm_final_zero/bm_final_zero_multi/by_comparison/bm_roc_zoom_D-B.png){#fig-roc-zoom-zero-DB}
+
+Curvas ROC (zoom) para cada comparación al imputar con el método *zero*. 
+:::
 
 El método de imputación Impseq para los valores ausentes aleatorios combinado con el método de imputacion zero para valores ausentes no aleatorios tambien toma posiciones altas cuando la diferencia entre muestras es más notoria. Especialmente, cuando la muestra D no se está comparando. Esto indica que la combinación del método Impseq y zero, no es tan capaz de controlar los falsos negativos como la combinación del método Impseq junto con min o halfmin. Esto se puede observar en los gráficos siguientes.
 
 ```{r confusion stacked bm final zero}
-
 bm_multi_results_final_zero$gg_confusion_stacked_by_comp$`C-A`
 
 bm_multi_results_final_zero$gg_confusion_stacked_by_comp$`D-C`
 ```
 
-FIX ME QUITAR: Que sea una muestra sintética hace que haya menos variabilidad biológica . El problema de estos datos es que cada réplica es igual, aunque se han procesado de maenra independiente, la muestra en si es igual.
+## Análisis estadístico de las comparaciones óptimas
 
 ```{r logFC classif final zero}
 #| echo: false
@@ -271,12 +288,9 @@ grafico_final <- ggplot() +
     plot.margin = margin(20, 20, 20, 20),
     plot.background = element_rect(fill = "#FAFAFA", color = NA) 
   )
-
- 
 ```
 
 ```{r proc prot logFC sinfiltro}
-
 pp_cycloess_Impseq_zero <- process_proteomics(preproc_data_spikein,
                                        norm_method = "cycloess",
                                        imp_method = "combo",
@@ -298,6 +312,8 @@ pp_Rlr_Impseq_zero <- process_proteomics(preproc_data_spikein,
                                        mnar_method = "zero",
                                        verbose = FALSE)
 
+# Proteinas con expresión diferencial en alguna condición para la generación del diagrama de Venn
+
 lista_proteinas_zero <- list(
   "cycloess_Impseq_zero" = pp_cycloess_Impseq_zero$PCA_Input$FeatureID
   [pp_cycloess_Impseq_zero$PCA_Input$sig_any],
@@ -317,10 +333,9 @@ for (nombre in names(lista_proteinas_zero)) {
   
   write.csv2(df_exportar, file = nombre_archivo, row.names = FALSE)
 }
-
-#df_cycloess_Impseq_min <- pp_cycloess_Impseq_min$PCA_Input
-
 ```
+
+### PCA 
 
 ```{r}
 scores_PCA_spikein_cycloess <- build_pca_scores(
@@ -403,8 +418,13 @@ pca_spikein_Rlr <- pca_highchart(
 pca_spikein_Rlr
 ```
 
+Independientemente del método de normalización e imputación, los datos se separan en función de la muestra a la que pertenecen.
+
 ```{r proc prot logFC02}
 #| echo: false
+
+# Para obtener las proteinas diferenciales con un abs(logFC) > 0.2
+
 pp_cycloess_Impseq_zero_logFC <- process_proteomics(preproc_data_spikein,
                                        norm_method = "cycloess",
                                         imp_method = "combo",
