@@ -38,16 +38,10 @@ im_metr_vsn <- imputation_metrics(
 
 Al igual que en los métodos de normalización, los métodos de imputacion cuentan con unas métricas para su evaluación. Así, de la misma manera se rankean los diferentes métodos con valores del 1 al número de métodos evaluados y promedia la posición.
 
-```{r}
-im_metr_vsn$metrics_table[, c( "Method", "NRMSE", "SOR", "PSS", "ACC_OI", "Rank_Mean")]
-```
+![**Métricas NAguider para los diferentes métodos de imputación tras normalizar con vsn**](./imputation_metrics_vsn/metrics.png){#fig-metrics-vsn}
 
-```{r, fig.width = 10, fig.height = 10}
-im_metr_vsn$metrics
-```
+En las gráficas (@fig-metrics-vsn) se observan las puntuaciones de cada métrica para cada método.
 
-```{r, fig.width = 12, fig.height = 10}
-im_metr_vsn$ranking
-```
+![**Ranking según las métricas de NAguider para los diferentes métodos de imputación tras normalizar con vsn**](./imputation_metrics_vsn/ranking.png){#fig-ranking-vsn}
 
-La imagen superior muestra que el mejor método de imputación de datos es *Impseq*, además de ser confirmado por tener el menor RankMean, en tres de las cuatro métricas tiene un valor de uno, es decir, tiene el valor óptimo de entre todos los métodos de imputación. Por ello se seleccionará como método de imputacion de datos a la hora de realizar el análisis comparativo.
+La imagen superior (@fig-ranking-vsn) muestra que el mejor método de imputación de datos es *Impseq*, además de ser confirmado por tener el menor RankMean, en tres de las cuatro métricas tiene un valor de uno, es decir, tiene el valor óptimo de entre todos los métodos de imputación. Por ello se seleccionará como método de imputacion de datos a la hora de realizar el análisis comparativo.
