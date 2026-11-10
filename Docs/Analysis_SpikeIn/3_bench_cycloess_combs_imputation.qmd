@@ -1,8 +1,8 @@
-Como se ha indicado anteriormente, la comparación estadística requiere los valores esperados de los cambios. Además, podemos proporcionar la naturaleza de cada proteina. 
+Como se ha indicado anteriormente, la comparación estadística requiere los valores esperados de los cambios. Además, podemos proporcionar la naturaleza de cada proteína. 
 
 ### Valores esperados de la tasa de cambio
 
-Se establecen los valores esperados de cambio en funcion de las proporciones de cada especie en cada muestra. Dado que no se podría calcular el cociente de 0, se ha establecido 1 como valor mínimo, de tal manera que las tasas de cambios esperadas en el caso de las comparaciones con la muestra D, no son completamente realistas. 
+Se establecen los valores esperados de cambio en función de las proporciones de cada especie en cada muestra. Dado que no se podría calcular el cociente de 0, se ha establecido 1 como valor mínimo, de tal manera que las tasas de cambios esperadas en el caso de las comparaciones con la muestra D, no son completamente realistas. 
 
 ```{r expected change}
 expected_log2FC <- round(c(
@@ -26,13 +26,11 @@ expected_change <- data.frame(
     expected_logFC = expected_log2FC)
 ```
 
-### Asociacion de proteinas a especies
+### Asociacion de proteínas a especies
 
-La asociación de proteinas a especies permite ver como se distribuyen los resultados. Se espera que los verdaderos negativos pertenezcan a proteinas humanas mientras que los verdaderos positivos pertenezcan a proteinas de *E. coli* o *S. cerevisiae*
+La asociación de proteínas a especies permite ver como se distribuyen los resultados. Se espera que los verdaderos negativos pertenezcan a proteínas humanas mientras que los verdaderos positivos pertenezcan a proteínas de *E. coli* o *S. cerevisiae*
 
-Dado que se trata de un ensayo donde conocemos las proteinas que deben aparecer, debemos cargar la tabla de datos que indica a que organismo pertenece cada protein group. Esta no debe tener grupos proteicos duplicados, en caso de que aparezcan, NADIA devuelve un mensaje indicando que hay duplicados. De esta manera, tambien se asegura que el número de DE no sea superior ( FIX ME: al ser JOIN imagino que haga el JOIN INTO DE table )
-
-DUDA: si tengo un número de DE menor porque se hayan filtrado o no se hayan detectado ¿? Que pasa
+Dado que se trata de un ensayo donde conocemos las proteínas que deben aparecer, debemos cargar la tabla de datos que indica a que organismo pertenece cada *protein-group*. Esta no debe tener grupos proteicos duplicados, en caso de que aparezcan, NADIA devuelve un mensaje indicando que hay duplicados.
 
 ```{r protein association cycloess}
 
@@ -46,7 +44,7 @@ species_pg_df <- data.frame(Protein.IDs = spikein_data$PG.ProteinGroups,
 
 ### Imputaciones a testar
 
-Se establecen cycloess, vsn y Rlr como los métodos de normalizacion óptimos dados los resultados en el benchmarking de la propia normalización. Se va a mostrar el código para el análisis comparativo cuando la normalización se realiza con cycloess dadas las limitaciones de espacio. En el [github][FIX] se encuentran los archivos donde se ejecuta el código correspondiente a los métodos de normalización vsn y Rlr que darán lugar a las gráficas y resultados finales. 
+Se establecen *cycloess*, *vsn* y *Rlr* como los métodos de normalizacion óptimos dados los resultados en el análisis comparativo de la normalización. De la misma manera que en el análisis de los métodos de imputación de valores MAR, solo se muestra el código para el método de normalización *cycloess*, para los demás métodos probados, el archivo se encuentra en el repositorio de GitHub indicado en la memoria.
 
 ```{r combinations cycloess}
 combinations_cycloess_combs_imput <- list(
@@ -110,11 +108,9 @@ making_names <- function(combin){
 
 ```
 
-### Bucle de procesamiento con *benchmarking* unico
+### Bucle de procesamiento con análisis comparativo único
 
 Para llevar a cabo el evaluación de las diferentes combinaciones de métodos de normalización e imputación de los datos, se procesan los datos de manera iterativa y y se ejecuta el *benchmarking* individual para cada combinación. Durante el bucle, los resultados se almacenan en las listas inicializadas previamente, se les añade como identificador el nombre de la combinación y se combinan en un objeto unificado al final del bloque de código. Así, adaptamos la salida de la funcion de *benchmarking* unico a la entrada de la funcion de *benchmarking* multiple
-
-Para llevar a cabo la evaluación de las diferentes combinaciones de métodos de normalización e imputación, se procesan los datos iterativamente y se ejecuta el benchmarking individual para cada escenario. Durante este bucle, se extraen los resultados específicos de cada ensayo —las métricas de OpDEA, los datos de confusión global, la tabla de métricas del benchmarking y el registro de clasificación—, se les añade un identificador con el nombre de la combinación y se almacenan en listas inicializadas de manera previa. Al finalizar todas las iteraciones, los elementos de cada lista se unifican verticalmente en dataframes consolidados, adaptando así la salida de la función de benchmarking único para que pueda ser utilizada directamente como entrada en la función de benchmarking múltiple.
 
 ```{r bm single final zero, results = "hide", warning = FALSE}
 #Lists to store benchmarking information
@@ -186,7 +182,7 @@ all_classif_cycloess_combs_imput <- do.call(rbind,
 Con los objetos creados anteriormente, podemos utilizar la función del *benchmarking* multiple. 
 
 ```{r bm multi cycloess}
-# Comparing individual benchmarking results
+# Comparación de los resultados individuales
 bm_multi_results_cycloess_combs_imput <- benchmarking_multiple(
   opdea_combined = all_OpDEA_cycloess_combs_imput,
   confusion_combined = all_confusion_cycloess_combs_imput,
@@ -201,7 +197,7 @@ bm_multi_results_cycloess_combs_imput <- benchmarking_multiple(
 ### Gráficos y comparaciones
 
 Según el gráfico de barras generado en base a las métricas OpDEA (@fig-OpDEA-cycloess), al igual que
-el gráfico de las métricas de NAguideR (@fig-extended-cycloess), el mejor método de imputación de valores MNAR cuando los valores son imputados con el método cycloess y los valores MAR se imputan mediante Impseq, parecen ser zero y min. 
+el gráfico de las métricas de NAguideR (@fig-extended-cycloess), el mejor método de imputación de valores MNAR cuando los valores son imputados con el método *cycloess* y los valores MAR se imputan mediante *Impseq*, parecen ser *zero* y *min*. 
 
 ::: {#fig-comparativa-cycloess layout-ncol=2}
 
@@ -209,10 +205,10 @@ el gráfico de las métricas de NAguideR (@fig-extended-cycloess), el mejor mét
 
 ![Gráfico de barras de las métricas](./bm_cycloess_combs_imput/bm_cycloess_combs_multi/bm_multiple_extended_ranking_bars.png){#fig-extended-cycloess}
 
-Gráficos de comparación de métodos de imputación de valores combinados en función de diferentes métricas.
+**Gráficos de comparación de métodos de imputación de valores combinados en función de diferentes métricas.**
 :::
 
-Las curvas ROC para cada comparación (@fig-roc-comparaciones) corroboran que la combinación del método Impseq junto al zero son los que devuelven menor número de falsos positivos tras la imputación de valores. A pesar de que esta combinación no se muestre siempre en las primeras posiciones, tiende a obtener valores altos de pAUC cercanos a los de las posiciones iniciales en la mayoria de los casos.
+Las curvas ROC para cada comparación (@fig-roc-comparaciones) corroboran que la combinación de los métodos *Impseq* y *zero* es la que devuelve menor número de falsos positivos tras la imputación de valores. A pesar de que esta combinación no se muestre siempre en las primeras posiciones, tiende a obtener valores altos de pAUC cercanos a los de las posiciones iniciales en la mayoria de los casos.
 
 ::: {#fig-roc-comparaciones layout-ncol=3}
 
@@ -231,9 +227,6 @@ Las curvas ROC para cada comparación (@fig-roc-comparaciones) corroboran que la
 **Representación de las curvas ROC para las seis comparaciones realizadas entre los distintos grupos experimentales.**
 :::
 
-El método de imputación Impseq para los valores ausentes aleatorios combinado con el método de imputacion zero para valores ausentes no aleatorios toma posiciones altas. Como se observa en la @fig-conf-stacked-all-comb donde el método de imputacion de valores MNAR zero es el que menor falsos positivos y falsos negativos devuelve de manera general. Además, se observa que el método de imputación limpa, tiende a generar un alto número de falsos negativos. 
+Esta combinación tambien toma posiciones altas al análizar la matriz de confusión. En ella se observan el número de falsos positivos, falsos negativos, verdaderos positivos y verdaderos negativos presentes en el análisis. Se observa en la @fig-conf-stacked-all-comb que el método de imputacion de valores MNAR *zero* es el que menor falsos positivos y falsos negativos devuelve de manera general. Además, se observa que el método de imputación *limpa* (y consiguiente estadístico), tiende a generar un alto número de falsos negativos. 
 
-![Matriz de confusión para las diferentes combinaciones.](./bm_cycloess_combs_imput/bm_cycloess_combs_multi/bm_multiple_confusion_stacked.png){#fig-conf-stacked-all-comb}
-
-
-QUe sea una muestra sintética hace que haya menos variabilidad biológica . El problema de estos datos es que cada réplica es igual, aunque se han procesado de manera independiente, la muestra en si es igual.
+![**Matriz de confusión para las diferentes combinaciones**.](./bm_cycloess_combs_imput/bm_cycloess_combs_multi/bm_multiple_confusion_stacked.png){#fig-conf-stacked-all-comb}
