@@ -7,14 +7,14 @@ editor: source
 
 ## Carga de datos y filtrado inicial
 
-```{r}
+```{r loading_data_vsn}
 library(NADIA)
-preproc_data_spikein <- preprocess_spectronaut("../Benchmarking_data.tsv", condition_order = c("A", "B", "C", "D"), verbose = FALSE)
+preproc_data_spikein <- preprocess_spectronaut("../../../Benchmarking_data.tsv", condition_order = c("A", "B", "C", "D"), verbose = FALSE)
 ```
 
 Se normalizan los datos con el método *vsn* para poder continuar con el análisis de las métricas. Se usa la función *im_prepare_se* generada para este análisis.
 
-```{r}
+```{r imp_se_vsn}
 imp_se_vsn <- im_prepare_se(
     preproc_data_spikein,
     norm_method = "vsn",
@@ -25,18 +25,37 @@ imp_se_vsn <- im_prepare_se(
 
 Se selecciona *pattern = "from_data"* con el objetivo de que la distribución que usada para evaluar las métricas sea lo más parecida a la real.
 
-```{r}
+```{r imp_mtr_vsn}
 im_metr_vsn <- imputation_metrics(
     imp_se_vsn,
     assay_name = "vsn",
     pattern = "from_data",
-    output_dir = "C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/imputation_metrics_vsn",
+    output_dir = "./practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/imputation_metrics_vsn",
     verbose = FALSE)
 ```
 
 ## Análisis de las métricas para selección del métodos de imputacion
 
-Al igual que en los métodos de normalización, los métodos de imputacion cuentan con unas métricas para su evaluación. Así, de la misma manera se rankean los diferentes métodos con valores del 1 al número de métodos evaluados y promedia la posición.
+Al igual que en los métodos de normalización, los métodos de imputacion cuentan con unas métricas para su evaluación. Así, de la misma manera se rankean los diferentes métodos con valores del 1 al número de métodos evaluados y promedia la posición (@tbl-metrics-vsn).
+
+|Method    |  NRMSE|   SOR| PSS| ACC_OI| Rank_Mean|
+|:---------|------:|-----:|---:|------:|---------:|
+|Impseq    | 0.1059|  6106|  NA| 0.9944|      1.00|
+|bpca      | 0.1060|  6294|  NA| 0.9944|      2.33|
+|Impseqrob | 0.1067|  6186|  NA| 0.9943|      2.67|
+|nbavg     | 0.1294|  9589|  NA| 0.9916|      4.00|
+|MLE       | 0.1415| 12294|  NA| 0.9900|      5.67|
+|limpa     | 0.1964| 10519|  NA| 0.9808|      6.00|
+|knn       | 0.2295|  9827|  NA| 0.9736|      6.33|
+|MinDet    | 2.0239| 18991|  NA| 0.0034|      8.67|
+|MinProb   | 2.0253| 19112|  NA| 0.0099|      8.67|
+|QRILC     | 2.5667| 23521|  NA| 0.0037|     10.33|
+|PI        | 2.0556| 19803|  NA| 0.0024|     10.33|
+|min       | 3.5181| 25849|  NA|     NA|     12.00|
+|halfmin   | 3.9248| 28014|  NA|     NA|     13.00|
+|zero      | 6.3741| 30170|  NA|     NA|     14.00|
+: **Tabla de métodos de imputación de valores MAR tras normalizar con vsn** {#tbl-metrics-vsn}
+
 
 ![**Métricas NAguider para los diferentes métodos de imputación tras normalizar con vsn**](./imputation_metrics_vsn/metrics.png){#fig-metrics-vsn}
 
