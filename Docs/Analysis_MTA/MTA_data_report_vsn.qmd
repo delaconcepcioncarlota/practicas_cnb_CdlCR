@@ -56,7 +56,7 @@ Se ha automatizado el proceso de selección de métodos de normalizacion e imput
 #| message: false
 
 source("./fun_norm_imp_methods.R")
-norm_imp_methods_MTA <- obtaining_norm_imp_methods(".","../../../MTA_Report_for_NADIA.tsv", 
+norm_imp_methods_MTA <- obtaining_norm_imp_methods("../../..","MTA_Report_for_NADIA.tsv", 
 c("h24_0MTA","h24_10MTA", "h24_50MTA", "h48_0MTA","h48_10MTA", "h48_50MTA"))
 
 
