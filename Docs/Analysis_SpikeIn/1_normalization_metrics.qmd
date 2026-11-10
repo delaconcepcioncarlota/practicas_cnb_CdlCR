@@ -1,12 +1,13 @@
 ```{r loading NADIA library 1_norm}
 #| results: hide
 #| message: false
+#| echo: false
 library(NADIA)
 ```
 
-Dado que NADIA cuenta con 12 métodos de normalización, se van a evaluar las diferentes opciones según las métricas seleccionadas por el desarrollador con el objetivo de seleccionar la mejor para nuestros datos. Algunos de estos métodos de normalizacion son GlobalMedian, GlobalMEan, eqmdeians, medianNorm, meanNorm, vsn y quantile.
+Dado que NADIA cuenta con 12 métodos de normalización, se van a evaluar las diferentes opciones según las métricas seleccionadas por el desarrollador con el objetivo de seleccionar método de normalización óptimo para nuestros datos. Algunos de estos métodos de normalizacion son *GlobalMedian*, *GlobalMEan*, *eqmedians*, *medianNorm*, *meanNorm*, *vsn* y *quantile*.
 
-Para analizar el efecto de la normalización frente a la no normalización, se debería incluir el método denominado log2Norm, que hace referencia a la no normalizacion como se indica en la guia del paquete. Esto no es posible dado que las abundancias sin normalizar no están centradas en zero por lo que la comparación no es realista (se podría realizar reajustando la centralidad de los datos a través de un volcano plot). 
+Para analizar el efecto de la normalización frente a la no normalización, se debería incluir el método denominado log2Norm, que hace referencia a la no normalizacion como se indica en la guia del paquete. Esto no es posible dado que las abundancias sin normalizar no están centradas en zero por lo que la comparación no es realista (se podría realizar reajustando la centralidad de los datos a través de un gráfico de tipo *Volcano*). 
 
 ### Obtencion de valores métricos para la selección del método de normalización
 
@@ -14,17 +15,15 @@ Con el objetivo de poder evaluar de manera manual cuales son los mejores método
 
 - La funcion *nm_prepare_se* extrae de los metadatos y los datos de anotacion de proteinas necesarios para generar la matriz filtrada, sustituye los ceros por NA y genera los objetos SE crudo y con los datos normalizados por log2. 
 - La funcion *normalization_metrics* genera un ranking tras evaluar los diferentes métodos de normalizacion por los parámetros determinados: 
-  - Rank_PCV: Coeficiente de variación agrupado (*pooled coefficient of variation*). Calcula el coeficiente de variación (desviación estándar / media) de cada proteína dentro de cada condición y lo promedia. Mide la variabilidad relativa entre réplicas; cuanto menor, mejor.
-  - Rank_PMAD: Desviación absoluta mediana agrupada (*pooled median absolute deviation*). Mide la variabilidad entre réplicas de cada proteína dentro de cada condición, de forma robusta frente a valores atípicos; cuanto menor, mejor.
-  - Rank_PEV: Estimación de la varianza agrupada (*pooled estimate of variance*). Promedia la varianza de cada proteína dentro de cada condición; cuanto menor, mejor.
-  - Rank_Cor: Correlación intragrupo. Mide la correlación media entre muestras de una misma condición, es decir, cuánto se parecen las réplicas entre sí; cuanto mayor, mejor.
+  - Rank_PCV: Coeficiente de variación agrupado (*pooled coefficient of variation*). Calcula el coeficiente de variación (desviación estándar / media) de cada proteína dentro de cada condición y lo promedia. Mide la variabilidad relativa entre réplicas.Cuanto menor, mejor.
+  - Rank_PMAD: Desviación absoluta mediana agrupada (*pooled median absolute deviation*). Mide la variabilidad entre réplicas de cada proteína dentro de cada condición, de forma robusta frente a valores atípicos. Cuanto menor, mejor.
+  - Rank_PEV: Estimación de la varianza agrupada (*pooled estimate of variance*). Promedia la varianza de cada proteína dentro de cada condición. Cuanto menor, mejor.
+  - Rank_Cor: Correlación intragrupo. Mide la correlación media entre muestras de una misma condición, es decir, cuánto se parecen las réplicas entre sí. Cuanto mayor, mejor.
   - Rank_Sep: Separación entre condiciones. Mide cuánto difieren las abundancias entre condiciones distintas, para comprobar que la normalización no elimina las diferencias reales entre ellas.
   
-Así genera un Rank_final con la media de todas las posiciones. 
+Las cuatro primeras métricas evalúan la similitud dentro de un grupo (réplicas) y Rank_Sep la diferencia entre grupos, por lo que se busca un método que acerque las réplicas sin aplanar las diferencias entre condiciones. Así genera un Rank_final con la media de todas las posiciones. 
 
-Las cuatro primeras métricas evalúan la similitud dentro de un grupo (réplicas) y Rank_Sep la diferencia entre grupos, por lo que se busca un método que acerque las réplicas sin aplanar las diferencias entre condiciones.
-
-Dado que en función de la métrica el valor óptimo tiene que ser mayor o menor, se ha establecido que el mejor método tomará la posición 1 (en Rank_PCV, la posición 1 la ocupa el método con menor PCV, mientras que en Rank_Cor la ocupa el que obtenga la mayor correlación). Así, al promediar las posiciones, el método con menor Rank_final es el más óptimo, porque ha obtenido las mejores posiciones en el conjunto de las métricas.
+Dado que en función de la métrica la dirección valor óptimo varía, se ha establecido que el mejor método para esa métrica tomará la posición 1 (en Rank_PCV, la posición 1 la ocupa el método con menor PCV, mientras que en Rank_Cor la ocupa el que obtenga la mayor correlación). Así, al promediar las posiciones, el método con menor Rank_final es el óptimo, porque ha obtenido las mejores posiciones en el conjunto de las métricas.
 
 ```{r normalization methods}
 #| results: hide

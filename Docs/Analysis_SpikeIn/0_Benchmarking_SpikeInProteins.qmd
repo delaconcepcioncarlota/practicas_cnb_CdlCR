@@ -43,7 +43,7 @@ Los datos se adquirieron mediante espectrometría de masas con adquisición inde
 
 ## Análisis de los datos con el programa comercial Spectronaut
 
-La inferencia de proteínas se llevó a cabo con el software comercial Spectronaut (versión 20.5, Biognosys)@biognosys2026spectronaut, @bruderer2015extending. Para la inferencia se seleccionaron los proteomas revisados de Swiss-Prot de UniProt y se indicaron las condiciones en las que se había llevado a cabo la generación de las muestras. Así, tras 3 filtros de FDR, a nivel de espectro, de péptico y de proteína, se obtienen datos con alta potencia estadística, concretamente, se obtuvieron 156.800 grupos proteicos que fueron analizados estadísticamente.
+La inferencia de proteínas se llevó a cabo con el software comercial Spectronaut (versión 20.5, Biognosys) [@biognosys2026spectronaut; @bruderer2015extending]. Para la inferencia se seleccionaron los proteomas revisados de Swiss-Prot de UniProt y se indicaron las condiciones en las que se había llevado a cabo la generación de las muestras. Así, tras 3 filtros de FDR, a nivel de espectro, de péptico y de proteína, se obtienen datos con alta potencia estadística, concretamente, se obtuvieron 156.800 grupos proteicos que fueron analizados estadísticamente.
 
 Dada la presencia de péptidos compartidos, si un péptido se asocia a una proteína de humano y de levadura, en el caso de la muestra D, la abundancia de esa proteína de levadura aparecerá como valor cuando debería ser un NA ya que no se han añadido proteínas de levadura en la preparación de la muestra. Esto puede dar lugar a falsos negativos por mostrar abundancias similares en las comparaciones D-C donde las diferencias no son muy notorias.
 
@@ -66,7 +66,9 @@ Para seleccionar el método de normalización, NADIA combina las métricas de PR
 
 ## Carga de datos y filtrado inicial
 
-```{r loading data, results = "hide"}
+```{r loading data}
+#| results: hide
+#| message: false
 library(NADIA)
 preproc_data_spikein <- preprocess_spectronaut("../../../Benchmarking_data.tsv",
                                     condition_order = c("A", "B", "C", "D"), 
