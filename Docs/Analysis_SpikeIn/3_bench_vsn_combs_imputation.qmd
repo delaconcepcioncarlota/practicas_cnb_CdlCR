@@ -170,23 +170,17 @@ bm_multi_results_vsn_combs_imput <- benchmarking_multiple(
 
 ## Gráficos y comparaciones
 
-```{r}
-bm_multi_results_vsn_combs_imput$gg_ranking_bars_mean
-```
+![**Ranking final de las métricas de OpDEA.**](./bm_vsn_combs_imput/OpDEA_final_ranking_vsn_combs_imputation.png){#fig-OpDEA-vsn-metrics}
 
-Según la gráfica superior, donde se muestra la posición según las métricas OpDEA, al igual que en la @fig-ext-rank-bars, el mejor método de imputación de valores cuando la normalización se realiza mediante vsn_combs, es la combinación de bpca y min. El método bpca se usa para imputar valores en los valores ausentes aleatorios mientras que el método min se utiliza en los valores ausentes no aleatorios.
+Según la gráfica superior @fig-OpDEA-vsn-metrics, donde se muestra la posición según las métricas OpDEA, al igual que en la @fig-ext-rank-bars, el mejor método de imputación de valores cuando la normalización se realiza mediante vsn_combs, es la combinación de *Impseq* y *min*. El método *Impseq* se usa para imputar valores en los valores ausentes aleatorios mientras que el método *min* se utiliza en los valores ausentes no aleatorios.
 
 ![**Gráfico de barras de las métricas**](./bm_vsn_combs_imput/bm_multiple_extended_ranking_bars.png){#fig-ext-rank-bars-vsn}
 
-Al analizar las curvas ROC para cada comparación, el método de imputacion para valores ausentes aleatorios bpca tambien tiende a tomar las posiciones más altas alternando el método de imputacion de valores ausentes no aleatorios entre min y halfmin. Dependiendo de la diferencia real entre las muestras (@fig-ROC-comp-DC).
+Al analizar las curvas ROC para cada comparación, el método de imputacion para valores ausentes aleatorios bpca tambien tiende a tomar las posiciones más altas alternando el método de imputacion de valores ausentes no aleatorios entre min y halfmin. Dependiendo de la diferencia real entre las muestras (@fig-ROC-comp-DC). Como ocurre cuando se imputan valores con el método *Rlr*.
 
 ![**Curva ROC de la comparación D-C cuando se modifica el método de imputación de valores**](./bm_vsn_combs_imput/by_comparison/bm_roc_zoom_D-C.png){#fig-ROC-comp-DC}
 
-```{r}
-bm_multi_results_vsn_combs_imput$gg_roc_zoom_by_comp
-```
-
-El método de imputación Impseq para los valores ausentes aleatorios combinado con el método de imputacion min para valores ausentes no aleatorios tambien toma posiciones altas cuando la diferencia entre muestras es más notoria. Especialmente, cuando la muestra D no se está comparando. Esto indica que la combinación del método Impseq y min, no es tan capaz de controlar los falsos negativos como la combinación del método bpca junto con min o halfmin. Esto se puede observar en los gráficos siguientes.
+De la misma manera que en el caso de normalización con *Rlr* los métodos de imputación de valores MNAR que se muestran como los más adecuados, son *min*, *halfmin*, *zero* y el método *softHybrid*. Este último no se evalua dadas las limitaciones de espacio.
 
 :::{fig-conf-stack-vsn}
 
