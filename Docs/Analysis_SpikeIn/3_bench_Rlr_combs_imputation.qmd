@@ -2,14 +2,14 @@
 title: "3_bench_Rlr_combs_imputation"
 author: "Carlota de la Concepción Ruiz"
 format: html
-editor: visual
+editor: source
 ---
 
 ## Carga de datos y filtrado inicial
 
 ```{r}
 library(NADIA)
-preproc_data_spikein <- preprocess_spectronaut("../Benchmarking_data.tsv", condition_order = c("A", "B", "C", "D"), verbose = FALSE)
+preproc_data_spikein <- preprocess_spectronaut("../../../Benchmarking_data.tsv", condition_order = c("A", "B", "C", "D"), verbose = FALSE)
 ```
 
 ## Valores esperados
@@ -127,7 +127,7 @@ for (comb in combinations_Rlr_combs_imput){
   bm_result <- benchmarking_proteomics(pp_result$DEPs_results,
                           expected_values = expected_change,
                           species_df = species_pg_df, 
-                          output_dir = "C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_Rlr_combs_imput/bm_Rlr_combs_single",
+                          output_dir = "./tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_Rlr_combs_imput/bm_Rlr_combs_single",
                           verbose = FALSE)
   
   #Salvado de datos para cada bm
@@ -157,6 +157,8 @@ all_classif_Rlr_combs_imput <- do.call(rbind, classif_Rlr_combs_imput_list)
 
 ## Benchmarking multiple
 
+Se ejecuta de la misma manera que para *cycloess*, el benchmarking comparativo de todas las combinaciones.
+
 ```{r}
 
 bm_multi_results_Rlr_combs_imput <- benchmarking_multiple(
@@ -164,7 +166,7 @@ bm_multi_results_Rlr_combs_imput <- benchmarking_multiple(
   confusion_combined = all_confusion_Rlr_combs_imput,
   classified_combined = all_classif_Rlr_combs_imput,
   bench_metrics_combined = all_metrics_bm_Rlr_combs_imput,
-  output_dir = "C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_Rlr_combs_imput/bm_Rlr_combs_multi",
+  output_dir = "./practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_Rlr_combs_imput/bm_Rlr_combs_multi",
   verbose = FALSE
 )
 
@@ -172,39 +174,23 @@ bm_multi_results_Rlr_combs_imput <- benchmarking_multiple(
 
 ## Gráficos y comparaciones
 
-```{r}
-bm_multi_results_Rlr_combs_imput$gg_ranking_bars_mean
-```
+![**Ranking final de las métricas de OpDEA.**](./bm_Rlr_combs_imput/OpDEA_final_ranking_Rlr_combs_imputation.png){#fig-OpDEA-Rlr-metrics}
 
-Según la gráfica superior, donde se muestra la posición según las métricas OpDEA, al igual que en la @fig-ext-rank-bars, el mejor método de imputación de valores cuando la normalización se realiza mediante Rlr_combs, es la combinación de bpca y min. El método bpca se usa para imputar valores en los valores ausentes aleatorios mientras que el método min se utiliza en los valores ausentes no aleatorios.
+Según la gráfica superior @fig-fig-OpDEA-Rlr-metrics, donde se muestra la posición según las métricas OpDEA, al igual que en la @fig-ext-rank-bars-Rlr, el mejor método de imputación de valores cuando la normalización se realiza mediante *Rlr_combs*, es la combinación de *Impseq* y *zero*. El método *Impseq* se usa para imputar valores en los valores ausentes aleatorios mientras que el método *zero* se utiliza en los valores ausentes no aleatorios.
 
-## FIX
+![**Gráfico de barras de las métricas**](./bm_Rlr_combs_imput/bm_multiple_extended_ranking_bars.png){#fig-ext-rank-bars-Rlr}
 
-![Gráfico de barras de las métricas](%22C:\Users\Proteomica\Documents\tfm_cdlcr\Benchmarking_norm_w_imput\Benchmarking_norm_w_imput_res\bm_multiple_extended_ranking_bars.png%22){#fig-ext-rank-bars}
+Al analizar las curvas ROC los resultados son muy dependiendes de la comparación. Sin embargo y de manera general, se puede decir que los método de imputación de valores ausentes no aleatorios *zero*, *halfmin* y *min* limitan el número restringido de falsos positivos (@fig-ROC-comp-DC).
 
-```{r}
-bm_multi_results_Rlr_combs_imput$extended_ranking
-```
+![**Curva ROC de la comparación D-C cuando se modifica el método de imputación de valores**](./bm_Rlr_combs_imput/by_comparison/bm_roc_zoom_D-C.png){#fig-ROC-comp-DC}
 
-Al analizar las curvas ROC para cada comparación, el método de imputacion para valores ausentes aleatorios bpca tambien tiende a tomar las posiciones más altas alternando el método de imputacion de valores ausentes no aleatorios entre min y halfmin. Dependiendo de la diferencia real entre las muestras (@fig-ROC-comp-DC).
+Al analizar la sensibilidad de cada combinación, el método de imputación *Impseq* para los valores ausentes aleatorios combinado con el método de imputacion *min* para valores ausentes no aleatorios tambien toma posiciones altas cuando la diferencia entre muestras es más notoria. Especialmente, cuando la muestra D no se está comparando. Esto indica que la combinación del método *Impseq* y *min*, no es tan capaz de controlar los falsos negativos cuando la diferencia entre muestras es leve. Esto se puede observar en los gráficos siguientes (@fig-conf-stack-CA, @fig-conf-stack-DC).
 
-## FIX
+:::{fig-conf-stack}
 
-\`![Curva ROC de la comparación D-C cuando se modifica el método de imputación de valores](%22C:\Users\Proteomica\Documents\tfm_cdlcr\Benchmarking_norm_w_imput\Benchmarking_norm_w_imput_res\by_comparison\bm_roc_zoom_D-C.png%22){#fig-ROC-comp-DC}
+![Matriz de confusión para las comparación de las muestras C y A](./bm_Rlr_combs_imput/by_comparison/conf_matrix_CA.png){#fig-conf-stack-CA}
 
-```{r}
-bm_multi_results_Rlr_combs_imput$gg_roc_zoom_by_comp
-```
+![Matriz de confusión para las comparación de las muestras D y C](./bm_Rlr_combs_imput/by_comparison/conf_matrix_DC.png){#fig-conf-stack-DC}
 
-El método de imputación Impseq para los valores ausentes aleatorios combinado con el método de imputacion min para valores ausentes no aleatorios tambien toma posiciones altas cuando la diferencia entre muestras es más notoria. Especialmente, cuando la muestra D no se está comparando. Esto indica que la combinación del método Impseq y min, no es tan capaz de controlar los falsos negativos como la combinación del método bpca junto con min o halfmin. Esto se puede observar en los gráficos siguientes.
-
-```{r}
-
-bm_multi_results_Rlr_combs_imput$gg_confusion_stacked_by_comp$`C-A`
-
-bm_multi_results_Rlr_combs_imput$gg_confusion_stacked_by_comp$`D-C`
-```
-
-QUe sea una muestra sintética hace que haya menos variabilidad biológica . El problema de estos datos es que cada réplica es igual, aunque se han procesado de maenra independiente, la muestra en si es igual.
-
-Final -\> probar con una muestra real FC
+**Matrices de confusión para evaluar la imputación de valores con diferentes métodos.**
+:::

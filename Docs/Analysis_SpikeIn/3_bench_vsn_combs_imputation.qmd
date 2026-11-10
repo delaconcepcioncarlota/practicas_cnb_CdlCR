@@ -176,19 +176,11 @@ bm_multi_results_vsn_combs_imput$gg_ranking_bars_mean
 
 Según la gráfica superior, donde se muestra la posición según las métricas OpDEA, al igual que en la @fig-ext-rank-bars, el mejor método de imputación de valores cuando la normalización se realiza mediante vsn_combs, es la combinación de bpca y min. El método bpca se usa para imputar valores en los valores ausentes aleatorios mientras que el método min se utiliza en los valores ausentes no aleatorios.
 
-## FIX
-
-![Gráfico de barras de las métricas](%22C:\Users\Proteomica\Documents\tfm_cdlcr\Benchmarking_norm_w_imput\Benchmarking_norm_w_imput_res\bm_multiple_extended_ranking_bars.png%22){#fig-ext-rank-bars}
-
-```{r}
-bm_multi_results_vsn_combs_imput$extended_ranking
-```
+![**Gráfico de barras de las métricas**](./bm_vsn_combs_imput/bm_multiple_extended_ranking_bars.png){#fig-ext-rank-bars-vsn}
 
 Al analizar las curvas ROC para cada comparación, el método de imputacion para valores ausentes aleatorios bpca tambien tiende a tomar las posiciones más altas alternando el método de imputacion de valores ausentes no aleatorios entre min y halfmin. Dependiendo de la diferencia real entre las muestras (@fig-ROC-comp-DC).
 
-## FIX
-
-\`![Curva ROC de la comparación D-C cuando se modifica el método de imputación de valores](%22C:\Users\Proteomica\Documents\tfm_cdlcr\Benchmarking_norm_w_imput\Benchmarking_norm_w_imput_res\by_comparison\bm_roc_zoom_D-C.png%22){#fig-ROC-comp-DC}
+![**Curva ROC de la comparación D-C cuando se modifica el método de imputación de valores**](./bm_vsn_combs_imput/by_comparison/bm_roc_zoom_D-C.png){#fig-ROC-comp-DC}
 
 ```{r}
 bm_multi_results_vsn_combs_imput$gg_roc_zoom_by_comp
@@ -196,13 +188,11 @@ bm_multi_results_vsn_combs_imput$gg_roc_zoom_by_comp
 
 El método de imputación Impseq para los valores ausentes aleatorios combinado con el método de imputacion min para valores ausentes no aleatorios tambien toma posiciones altas cuando la diferencia entre muestras es más notoria. Especialmente, cuando la muestra D no se está comparando. Esto indica que la combinación del método Impseq y min, no es tan capaz de controlar los falsos negativos como la combinación del método bpca junto con min o halfmin. Esto se puede observar en los gráficos siguientes.
 
-```{r}
+:::{fig-conf-stack-vsn}
 
-bm_multi_results_vsn_combs_imput$gg_confusion_stacked_by_comp$`C-A`
+![Matriz de confusión para las comparación de las muestras C y A](./bm_Rlr_combs_imput/by_comparison/conf_matrix_CA.png){#fig-conf-stack-CA}
 
-bm_multi_results_vsn_combs_imput$gg_confusion_stacked_by_comp$`D-C`
-```
+![Matriz de confusión para las comparación de las muestras D y C](./bm_Rlr_combs_imput/by_comparison/conf_matrix_DC.png){#fig-conf-stack-DC}
 
-QUe sea una muestra sintética hace que haya menos variabilidad biológica . El problema de estos datos es que cada réplica es igual, aunque se han procesado de maenra independiente, la muestra en si es igual.
-
-Final -\> probar con una muestra real FC
+**Matrices de confusión para evaluar la imputación de valores con diferentes métodos.**
+:::
