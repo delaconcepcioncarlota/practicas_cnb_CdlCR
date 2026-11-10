@@ -2,9 +2,9 @@ La imputación de datos es necesaria para evitar la pérdida de información y r
 
 Dado que la detección de proteínas depende tanto de la muestra como de la sensibilidad del equipo de análisis, pueden aparecer como ausentes datos que realmente no lo son, es decir, proteínas presentes en la muestra que no llegan a detectarse. Cuando esto ocurre, se habla de valores faltantes y se denotan como *NA* (en algunos casos, el equipo indica un valor cero, que se controla en el paso de preprocesamiento de los datos crudos sustituyéndolo por un *NA*).
 
-Un valor puede estar ausente por dos motivos diferentes: encontrarse por debajo del límite de detección o producirse un fallo de detección. Así, se distinguen dos tipos de *NA*:
+Un valor puede estar ausente por dos motivos diferentes, encontrarse por debajo del límite de detección o producirse un fallo de detección. Así, se distinguen dos tipos de *NA*:
 
-- *MAR* (*Missing At Random*): valores ausentes a causa de fallos en la detección. Un valor faltante en una réplica de una condición en la que aparece en todas las réplicas menos una (umbral a determinar por el investigador) suele deberse a un fallo en la detección.
+- *MAR* (*Missing At Random*): valores ausentes a causa de fallos en la detección. Un valor faltante en una réplica de una condición en la que aparece presente en todas las réplicas menos una suele deberse a un fallo en la detección.
 - *MNAR* (*Missing Not At Random*): valores ausentes debidos a un nivel de abundancia tan bajo que el equipo no es capaz de detectarlo. En este caso, no suelen aparecer valores de cuantificación en ninguna de las réplicas de una misma condición, pero sí en otras condiciones.
 
 Dado que la naturaleza de los valores ausentes no siempre es la misma, el manejo e imputación de los valores no conviene hacerlos de la misma manera. El objetivo del paquete es poder seleccionar el mejor método de imputación para cada tipo de valor ausente.
@@ -20,7 +20,7 @@ imp_se_cycloess <- im_prepare_se(
 
 ### Obtencion de valores métricos para la selección del método de imputación
 
-Se selecciona pattern = "from_data" con el objetivo de que la distribución que usada para evaluar las métricas sea lo más parecida a la real.
+Se selecciona `pattern = "from_data"` con el objetivo de que la distribución que usada para evaluar las métricas sea lo más parecida a la real.
 
 ```{r imputation metrics, results = "hide"}
 im_metr_cycloess <- imputation_metrics(
@@ -35,7 +35,9 @@ im_metr_cycloess <- imputation_metrics(
 
 Al igual que en los métodos de normalización, los métodos de imputación cuentan con unas métricas para su evaluación. De la misma manera, se ordenan los diferentes métodos asignándoles una posición del 1 al número de métodos evaluados en cada métrica, y se promedian las posiciones obtenidas para calcular el rango medio (*Rank Mean*). Los métodos *zero*, *min* y *halfmin* no tienen valor en la métrica ACC OI, por lo que su rango medio se calcula solo con las métricas disponibles.
 
-Algunos métodos de imputación disponibles en el paquete no aparecen en la evaluación: *with*, *softhybrid* y *none*. En el caso de *none*, esto se debe a que no imputar no permite calcular métricas de evaluación.
+Algunos métodos de imputación disponibles en el paquete no aparecen en la evaluación, *with*, *softhybrid* y *none*. 
+
+No se ha utilizado *with* dado que implica determinar un valor para todos los valores NA, lo que necesita un estudio para determinar que valor sería el más apropiado y dado que, queremos un valor apropiado para cada caso, usar with no aportará información relevante (está incorporado por si el usuario quisiera usarlo). En el caso de *none*, esto se debe a que no imputar no permite calcular métricas de evaluación. Finalmente,*SoftHybrid* no se ha usado dado que es un método que imputa valores de manera similar a un método combo (MAR y MNAR diferentes), no a un método simple.
 
 |  **Método**  | **NRMSE Rank** | **SOR Rank** | **PSS Rank** | **ACC OI Rank** | **Rank Mean** |
 |:-------------|:--------------:|:------------:|:------------:|:---------------:|:-------------:|
@@ -56,12 +58,10 @@ Algunos métodos de imputación disponibles en el paquete no aparecen en la eval
 |  halfmin     |       15       |      15      |      15      |        NA       |     15.00     |
 |    zero      |       16       |      16      |      14      |        NA       |     15.33     |
 
-: Tabla de métricas de imputación de valores cuando la normalización se lleva a cabo mediante *cycloess*. {#tbl-imp-metrics-spikein-cycloess}
+: **Tabla de métricas de imputación de valores cuando la normalización se lleva a cabo mediante *cycloess*.** {#tbl-imp-metrics-spikein-cycloess}
 
 ```{r metrics graph imp, fig.width = 10, fig.height = 10}
 im_metr_cycloess$metrics
 ```
 
-La imagen superior muestra que el mejor método de imputación de datos es *Impseq*, además de ser confirmado por tener el menor RankMean, en tres de las cuatro métricas tiene un valor de uno, es decir, tiene el valor más optimo de entre todos los métodos de imputación (@tbl-imp-metrics-spikein-cycloess).
-
-QUe sea una muestra sintética hace que haya menos variabilidad biológica . El problema de estos datos es que cada réplica es igual, aunque se han procesado de maenra independiente, la muestra en si es igual. 
+La imagen superior muestra que el mejor método de imputación de datos es *Impseq*, además de ser confirmado por tener el menor RankMean, en tres de las cuatro métricas tiene un valor de uno, es decir, es el más apropiado de entre todos los métodos de imputación probados (@tbl-imp-metrics-spikein-cycloess).
