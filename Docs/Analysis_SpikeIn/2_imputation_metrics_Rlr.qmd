@@ -7,7 +7,7 @@ editor: source
 
 ## Carga de datos y filtrado inicial
 
-```{r lading_data_rlr}
+```{r loading_data_rlr}
 library(NADIA)
 preproc_data_spikein <- preprocess_spectronaut("../Benchmarking_data.tsv", condition_order = c("A", "B", "C", "D"), verbose = FALSE)
 ```
