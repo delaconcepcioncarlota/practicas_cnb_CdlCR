@@ -71,8 +71,7 @@ Para seleccionar el método de normalización, NADIA combina las métricas de PR
 #| message: false
 library(NADIA)
 preproc_data_spikein <- preprocess_spectronaut("../../../Benchmarking_data.tsv",
-                                    condition_order = c("A", "B", "C", "D"), 
-                                    verbose = FALSE)
+                                    condition_order = c("A", "B", "C", "D"))
 ```
 
 ## Selección del método de normalización
@@ -80,6 +79,8 @@ preproc_data_spikein <- preprocess_spectronaut("../../../Benchmarking_data.tsv",
 {{< include 1_normalization_metrics.qmd >}}
 
 ## Selección del método de imputación de valores MAR
+
+Solo se muestra el código al evaluar los métodos de imputación de valores MAR tras normalizar con *cycloess*. El análisis de los métodos tras normalizar con *Rlr* y *vsn* se encuentran en la carpeta *Analysis_SpikeIn*. No se muestran dado que el flujo y el resultado es el mismo para todos los casos.
 
 {{< include 2_imputation_metrics_cycloess.qmd >}}
 
