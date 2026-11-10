@@ -13,6 +13,8 @@ format:
               hyphens: auto;
             }
           </style>
+bibliography: referencias.bib
+csl: vancouver.csl
 editor: source
 ---
 

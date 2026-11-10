@@ -1,5 +1,6 @@
 ---
 title: "Análisis comparativo de una muestra con proteinas de referencia"
+subtile: "Material de apoyo de la memoria de prácticas"
 author: "Carlota de la Concepción Ruiz"
 format: 
   html:
@@ -12,6 +13,8 @@ format:
               hyphens: auto;
             }
           </style>
+bibliography: referencias.bib
+csl: vancouver.csl
 editor: source
 ---
 
@@ -30,13 +33,13 @@ La muestra de referencia contiene proteínas humanas, bacterianas (*E.coli*) y d
 : **Composición de las muestras experimentales.** {#tbl-composicion-muestras}
 :::
 
-La muestra se ha preparado extrayendo las proteinas de kits comerciales. Las proteínas humanas se han extraído de células de HeLa-CCL 2 (ATCC™), proteínas *E.coli* Strain HB101 K-12 (BioRad) y proteínas de *S.cerevisiae* (Promega). Se obtuvo el conjunto de proteínas a partir del mismo batch. Posteriormente, el tratamiento de las proteínas se realizó de manera independiente. Además, a la hora de aislar las proteínas, se distribuyeron de tal manera que el aislamiento de estas no fuera dependiente de la muestra, sino que, en cada fila, había muestras de distinto tipo. De esta manera se han generado 4 pseudo-replicas biológicas para cada condición.
+La muestra se ha preparado extrayendo las proteinas de kits comerciales. Las proteínas humanas se han extraído de células de HeLa-CCL 2 (ATCC™), proteínas *E.coli* Strain HB101 K-12 (BioRad) y proteínas de *S.cerevisiae* (Promega).De esta manera se han generado 4 replicas para cada condición.
 
 # Generación de datos mediante nanoLC-MS/MS y tratamiento con Spectronaut
 
 ## Adquisición de datos
 
-Los datos se adquirieron mediante espectrometría de masas con adquisición independiente de datos (DIA, Data-Independent Acquisition). En esta estrategia la fragmentación no depende de lo observado en el espectro MS1, por lo que no se seleccionan únicamente los precursores más intensos. Todo el rango de m/z se recorre de forma sistemática mediante ventanas de aislamiento, de anchura variable según la complejidad y la abundancia de cada zona del espectro. Se fragmentan todos los precursores contenidos en cada una. Los espectros resultantes son mezclas de péptidos que se deconvolucionan después, mediante librerías espectrales, en el software de análisis. De este modo, los péptidos poco abundantes se detectan con mayor frecuencia, lo que genera menos valores ausentes y una cuantificación más reproducible entre runs.
+Los datos se adquirieron mediante espectrometría de masas con adquisición independiente de datos (DIA, *Data-Independent Acquisition*). En esta estrategia, se recorre todo el rango de m/z de forma sistemática mediante ventanas de aislamiento, de anchura variable según la complejidad y la abundancia de cada zona del espectro. Se fragmentan todos los precursores contenidos en cada una. Los espectros resultantes son quiméricos, es decir, corresponden a mezclas de péptidos coeluyentes y requieren una deconvolución posterior, en el programa de análisis. De este modo, los péptidos poco abundantes se detectan con mayor frecuencia, lo que genera menos valores ausentes y una cuantificación más reproducible entre experimentos.
 
 ## Análisis de los datos con el programa comercial Spectronaut
 
