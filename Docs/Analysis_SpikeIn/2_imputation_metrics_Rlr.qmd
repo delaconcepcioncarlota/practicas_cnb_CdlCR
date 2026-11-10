@@ -7,14 +7,14 @@ editor: source
 
 ## Carga de datos y filtrado inicial
 
-```{r}
+```{r lading_data_rlr}
 library(NADIA)
 preproc_data_spikein <- preprocess_spectronaut("../Benchmarking_data.tsv", condition_order = c("A", "B", "C", "D"), verbose = FALSE)
 ```
 
 Se normalizan los datos con el método *Rlr* para poder continuar con el análisis de las métricas. Se usa la función *im_prepare_se* generada para este análisis.
 
-```{r}
+```{r imp_se_rlr}
 imp_se_Rlr <- im_prepare_se(
     preproc_data_spikein,
     norm_method = "Rlr",
@@ -25,7 +25,7 @@ imp_se_Rlr <- im_prepare_se(
 
 Se selecciona *pattern = "from_data"* con el objetivo de que la distribución que usada para evaluar las métricas sea lo más parecida a la real.
 
-```{r}
+```{r imp_mtr_rlr}
 im_metr_Rlr <- imputation_metrics(
     imp_se_Rlr,
     assay_name = "Rlr",
