@@ -9,7 +9,7 @@ editor: source
 
 ```{r loading_data_rlr}
 library(NADIA)
-preproc_data_spikein <- preprocess_spectronaut("../Benchmarking_data.tsv", condition_order = c("A", "B", "C", "D"), verbose = FALSE)
+preproc_data_spikein <- preprocess_spectronaut("../../../Benchmarking_data.tsv", condition_order = c("A", "B", "C", "D"), verbose = FALSE)
 ```
 
 Se normalizan los datos con el método *Rlr* para poder continuar con el análisis de las métricas. Se usa la función *im_prepare_se* generada para este análisis.
@@ -30,13 +30,13 @@ im_metr_Rlr <- imputation_metrics(
     imp_se_Rlr,
     assay_name = "Rlr",
     pattern = "from_data",
-    output_dir = "C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/imputation_metrics_Rlr",
+    output_dir = "./practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/imputation_metrics_Rlr",
     verbose = FALSE)
 ```
 
 ## Análisis de las métricas para selección del métodos de imputacion
 
-Al igual que en los métodos de normalización, los métodos de imputacion cuentan con unas métricas para su evaluación. Así, de la misma manera se rankean los diferentes métodos con valores del 1 al número de métodos evaluados y promedia la posición.
+Al igual que en los métodos de normalización, los métodos de imputacion cuentan con unas métricas para su evaluación. Así, de la misma manera se rankean los diferentes métodos con valores del 1 al número de métodos evaluados y promedia la posición (@tbl-metrics-Rlr).
 
 |*Method*    |  *NRMSE*|   *SOR*| *PSS*| *ACC_OI*| *Rank_Mean*|
 |:---------|:-----:|:----:|---:|:-----:|:--------:|
@@ -54,7 +54,7 @@ Al igual que en los métodos de normalización, los métodos de imputacion cuent
 |min       | 4.0298| 25857|  NA|     NA|     12.00|
 |halfmin   | 4.4376| 28013|  NA|     NA|     13.00|
 |zero      | 6.3182| 30170|  NA|     NA|     14.00|
-: Tabla de métodos de imputación de valores MAR tras normalizar con Rlr {#tbl-metrics-Rlr}
+: **Tabla de métodos de imputación de valores MAR tras normalizar con Rlr** {#tbl-metrics-Rlr}
 
 Las métricas para valorar los métodos de imputacion usadas por [NAguider](10.1093/nar/gkaa498) solo son útiles para los métodos MAR. Por ello, tras el análisis del método de normalización más optimo para estos datos, se selecciona el mejor método de imputación para los valores ausentes debido a causas aleatorias mediante las métricas NRMSE, SOR, PSS y ACC_OI determinadas por NAguider.
 
