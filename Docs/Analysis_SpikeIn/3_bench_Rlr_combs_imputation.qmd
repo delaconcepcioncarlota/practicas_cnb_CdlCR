@@ -1,5 +1,5 @@
 ---
-title: "3_bench_Rlr_combs_imputation"
+title: "Análisis comparativo usando *Rlr* como método de normalización e *Impseq* como método de imputación de valores MAR"
 author: "Carlota de la Concepción Ruiz"
 format: html
 editor: source

@@ -1,11 +1,16 @@
 ---
-title: "3_bench_vsn_combs_imputation"
+title: "Análisis comparativo usando *vsn* como método de normalización e *Impseq* como método de imputación de valores MAR"
 author: "Carlota de la Concepcion Ruiz"
-format: pdf
+format: html
 editor: source
 ---
 
-Como se ha indicado anteriormente, la comparación estadística requiere los valores esperados de los cambios. Además, podemos proporcionar la naturaleza de cada proteina. 
+## Carga de datos y filtrado inicial
+
+```{r}
+library(NADIA)
+preproc_data_spikein <- preprocess_spectronaut("../../../Benchmarking_data.tsv", condition_order = c("A", "B", "C", "D"), verbose = FALSE)
+```
 
 ### Valores esperados de la tasa de cambio
 
@@ -125,7 +130,7 @@ for (comb in combinations_vsn_combs_imput){
   bm_result <- benchmarking_proteomics(pp_result$DEPs_results,
                           expected_values = expected_change,
                           species_df = species_pg_df, 
-                          output_dir = "C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_vsn_combs_imput/bm_vsn_combs_single",
+                          output_dir = "./tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_vsn_combs_imput/bm_vsn_combs_single",
                           verbose = FALSE)
   
   #Salvado de datos para cada bm
@@ -162,7 +167,7 @@ bm_multi_results_vsn_combs_imput <- benchmarking_multiple(
   confusion_combined = all_confusion_vsn_combs_imput,
   classified_combined = all_classif_vsn_combs_imput,
   bench_metrics_combined = all_metrics_bm_vsn_combs_imput,
-  output_dir = "C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_vsn_combs_imput/bm_vsn_combs_multi",
+  output_dir = "./tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_vsn_combs_imput/bm_vsn_combs_multi",
   verbose = FALSE
 )
 
@@ -172,7 +177,7 @@ bm_multi_results_vsn_combs_imput <- benchmarking_multiple(
 
 ![**Ranking final de las métricas de OpDEA.**](./bm_vsn_combs_imput/OpDEA_final_ranking_vsn_combs_imputation.png){#fig-OpDEA-vsn-metrics}
 
-Según la gráfica superior @fig-OpDEA-vsn-metrics, donde se muestra la posición según las métricas OpDEA, al igual que en la @fig-ext-rank-bars, el mejor método de imputación de valores cuando la normalización se realiza mediante vsn_combs, es la combinación de *Impseq* y *min*. El método *Impseq* se usa para imputar valores en los valores ausentes aleatorios mientras que el método *min* se utiliza en los valores ausentes no aleatorios.
+Según la gráfica superior @fig-OpDEA-vsn-metrics, donde se muestra la posición según las métricas OpDEA, al igual que en la @fig-ext-rank-bars-vsn, el mejor método de imputación de valores cuando la normalización se realiza mediante vsn_combs, es la combinación de *Impseq* y *min*. El método *Impseq* se usa para imputar valores en los valores ausentes aleatorios mientras que el método *min* se utiliza en los valores ausentes no aleatorios.
 
 ![**Gráfico de barras de las métricas**](./bm_vsn_combs_imput/bm_multiple_extended_ranking_bars.png){#fig-ext-rank-bars-vsn}
 
@@ -182,11 +187,12 @@ Al analizar las curvas ROC para cada comparación, el método de imputacion para
 
 De la misma manera que en el caso de normalización con *Rlr* los métodos de imputación de valores MNAR que se muestran como los más adecuados, son *min*, *halfmin*, *zero* y el método *softHybrid*. Este último no se evalua dadas las limitaciones de espacio.
 
-:::{fig-conf-stack-vsn}
+::: {fig-conf-stack-vsn}
 
 ![Matriz de confusión para las comparación de las muestras C y A](./bm_Rlr_combs_imput/by_comparison/conf_matrix_CA.png){#fig-conf-stack-CA}
 
 ![Matriz de confusión para las comparación de las muestras D y C](./bm_Rlr_combs_imput/by_comparison/conf_matrix_DC.png){#fig-conf-stack-DC}
 
 **Matrices de confusión para evaluar la imputación de valores con diferentes métodos.**
+
 :::

@@ -2,7 +2,7 @@
 
 ```{r}
 library(NADIA)
-preproc_data_spikein <- preprocess_spectronaut("../Benchmarking_data.tsv", condition_order = c("A", "B", "C", "D"), verbose = FALSE)
+preproc_data_spikein <- preprocess_spectronaut("../../../Benchmarking_data.tsv", condition_order = c("A", "B", "C", "D"), verbose = FALSE)
 ```
 
 ## Valores esperados
@@ -42,7 +42,7 @@ species_pg_df <- data.frame(Protein.IDs = spikein_data$PG.ProteinGroups,
 
 ## Imputaciones a testar
 
-Se establecen *vsn* y vsn como los métodos de normalizacion óptimos dados los resultados en el benchmarking de la propia normalización
+Se establecen *cycloess*, *vsn* y *Rlr* como los métodos de normalizacion óptimos dados los resultados en el benchmarking de la propia normalización
 
 ```{r}
 combinations_final_min <- list(
@@ -111,7 +111,7 @@ for (comb in combinations_final_min){
   bm_result <- benchmarking_proteomics(pp_result$DEPs_results,
                           expected_values = expected_change,
                           species_df = species_pg_df, 
-                          output_dir = "C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_final_min/bm_final_min_single",
+                          output_dir = "./tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_final_min/bm_final_min_single",
                           verbose = FALSE)
   
   #Salvado de datos para cada bm
@@ -149,7 +149,7 @@ bm_multi_results_final_min <- benchmarking_multiple(
   confusion_combined = all_confusion_final_min,
   classified_combined = all_classif_final_min,
   bench_metrics_combined = all_metrics_bm_final_min,
-  output_dir = "C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_final_min/bm_final_min_multi",
+  output_dir = "./tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_final_min/bm_final_min_multi",
   verbose = FALSE
 )
 
@@ -157,15 +157,11 @@ bm_multi_results_final_min <- benchmarking_multiple(
 
 ## Gráficos y comparaciones
 
-```{r}
-bm_multi_results_final_min$gg_ranking_bars_mean
-```
+![Gráfico de barras de las métricas de OpDEA](./bm_final/opdea_final_min.png){#fig-opdea-metrics}
 
-Según la gráfica superior, donde se muestra la posición según las métricas OpDEA, al igual que en la @fig-ext-rank-bars, el mejor método de imputación de valores cuando la normalización se realiza mediante final_min, es la combinación de bpca y min. El método bpca se usa para imputar valores en los valores ausentes aleatorios mientras que el método min se utiliza en los valores ausentes no aleatorios.
+Según la gráfica superior (@fig-opdea-metrics), donde se muestra la posición según las métricas OpDEA, al igual que en la @fig-ext-rank-bars, el mejor método de imputación de valores cuando la normalización se realiza mediante final_min, es la combinación de *Impseq* y *min*. El método *Impseq* se usa para imputar valores en los valores ausentes aleatorios mientras que el método *min* se utiliza en los valores ausentes no aleatorios. Se ve que el mejor método tanto en función de las métricas OpDEA como en el ranking final, es *cycloess*.
 
-## FIX
-
-![Gráfico de barras de las métricas](%22C:\Users\Proteomica\Documents\tfm_cdlcr\Benchmarking_norm_w_imput\Benchmarking_norm_w_imput_res\bm_multiple_extended_ranking_bars.png%22){#fig-ext-rank-bars}
+![Gráfico de barras de la puntuación media](./bm_final/ranking_final_min.png){#fig-ext-rank-bars}
 
 ```{r}
 bm_multi_results_final_min$extended_ranking
@@ -192,11 +188,9 @@ bm_multi_results_final_min$gg_confusion_stacked_by_comp$`D-C`
 
 QUe sea una muestra sintética hace que haya menos variabilidad biológica . El problema de estos datos es que cada réplica es igual, aunque se han procesado de maenra independiente, la muestra en si es igual.
 
-```{r}
-bm_multi_results_final_min$gg_confusion_stacked
-```
+![**Matriz de confusión para todas las combinaciones en todas las comparaciones**](./bm_final/conf_stack_min.png){#fig-comf-stack-min}
 
-Como se observa en la gráfica superior, el método de normalización de cycloess introduce un numero menor de falsos positivos, lo que se verá representado en el número de proteinas siginificativas detectadas entre los diferentes métodos de normalización.
+Como se observa en la @fig-comf-stack-min el método de normalización de cycloess introduce un numero menor de falsos positivos, lo que se verá representado en el número de proteinas siginificativas detectadas entre los diferentes métodos de normalización.
 
 ```{r}
 
