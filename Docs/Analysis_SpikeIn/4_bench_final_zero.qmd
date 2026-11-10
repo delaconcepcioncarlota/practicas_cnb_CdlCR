@@ -189,10 +189,12 @@ bm_multi_results_final_zero$gg_confusion_stacked_by_comp$`C-A`
 bm_multi_results_final_zero$gg_confusion_stacked_by_comp$`D-C`
 ```
 
-## Análisis estadístico de las comparaciones óptimas
+## Análisis estadístico de las comparaciones mejor evaluadas por NADIA
 
 ```{r logFC classif final zero}
 #| echo: false
+#| results: hide
+
 library(dplyr)
 library(tidyr)
 library(purrr)
