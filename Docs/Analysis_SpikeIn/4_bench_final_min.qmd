@@ -1,3 +1,9 @@
+---
+title: "Análisis comparativo de los métodos de normalización usando *Impseq* como método de imputación de valores MAR y *min* como método de imputación de valores MNAR"
+author: "Carlota de la Concepcion Ruiz"
+format: html
+editor: source
+---
 ## Carga de datos y filtrado inicial
 
 ```{r}
@@ -163,34 +169,15 @@ Según la gráfica superior (@fig-opdea-metrics), donde se muestra la posición 
 
 ![Gráfico de barras de la puntuación media](./bm_final/ranking_final_min.png){#fig-ext-rank-bars}
 
-```{r}
-bm_multi_results_final_min$extended_ranking
-```
+Se observa en la @fig-ROC-comp-DC que cuando las abundancias entre condiciones no muestran grandes diferencias, los métodos de normalización de valores parecen ser *vsn* y *cycloess*.
 
-Al analizar las curvas ROC para cada comparación, el método de imputacion para valores ausentes aleatorios bpca tambien tiende a tomar las posiciones más altas alternando el método de imputacion de valores ausentes no aleatorios entre min y halfmin. Dependiendo de la diferencia real entre las muestras (@fig-ROC-comp-DC).
+![Curva ROC de la comparación D-C cuando se modifica el método de imputación de valores](./bm_final/by_comparison/bm_roc_zoom_DC.png){#fig-ROC-comp-DC}
 
-## FIX
-
-\`![Curva ROC de la comparación D-C cuando se modifica el método de imputación de valores](%22C:\Users\Proteomica\Documents\tfm_cdlcr\Benchmarking_norm_w_imput\Benchmarking_norm_w_imput_res\by_comparison\bm_roc_zoom_D-C.png%22){#fig-ROC-comp-DC}
-
-```{r}
-bm_multi_results_final_min$gg_roc_zoom_by_comp
-```
-
-El método de imputación Impseq para los valores ausentes aleatorios combinado con el método de imputacion min para valores ausentes no aleatorios tambien toma posiciones altas cuando la diferencia entre muestras es más notoria. Especialmente, cuando la muestra D no se está comparando. Esto indica que la combinación del método Impseq y min, no es tan capaz de controlar los falsos negativos como la combinación del método bpca junto con min o halfmin. Esto se puede observar en los gráficos siguientes.
-
-```{r}
-
-bm_multi_results_final_min$gg_confusion_stacked_by_comp$`C-A`
-
-bm_multi_results_final_min$gg_confusion_stacked_by_comp$`D-C`
-```
-
-QUe sea una muestra sintética hace que haya menos variabilidad biológica . El problema de estos datos es que cada réplica es igual, aunque se han procesado de maenra independiente, la muestra en si es igual.
+Como se observa en la @fig-comf-stack-min el método de normalización de *cycloess* introduce un numero menor de falsos positivos, lo que se verá representado en el número de proteinas siginificativas detectadas entre los diferentes métodos de normalización.
 
 ![**Matriz de confusión para todas las combinaciones en todas las comparaciones**](./bm_final/conf_stack_min.png){#fig-comf-stack-min}
 
-Como se observa en la @fig-comf-stack-min el método de normalización de cycloess introduce un numero menor de falsos positivos, lo que se verá representado en el número de proteinas siginificativas detectadas entre los diferentes métodos de normalización.
+## Resultados
 
 ```{r}
 
@@ -240,9 +227,11 @@ Tras la exportación de los grupos proteicos diferenciales, se ha generado un di
 
 El solapamiento es mayor cuando las proteinas exportadas son las obtenidas tras normalizar por Rlr y vsn. Esto se debe a que el método cycloess devuelve un número de falsos positivos menor que los métodos Rlr y vsn. Por ello, la confianza en que de esos 4386 grupos proteicos detectados como diferenciales, es superior a la confianza sobre los 1271 grupos proteicos comunes entre los diferenciales obtenidos tras la normalización con Rlr y vsn.
 
-![Diagrama de Venn de las proteinas diferencialmente expresadas de manera significativa entre los diferentes métodos de normalización.](C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_final_min/VennDiagram_bm_spikeIn.png){#fig-Venn-SpikeIn}
+![Diagrama de Venn de las proteinas diferencialmente expresadas de manera significativa entre los diferentes métodos de normalización.](./tfm_cdlcr/practicas_cnb_CdlCR/Docs/pics/intermediateFigures/SpikeIn_intermediateFigures/deepvenn_mnar_min.png){#fig-Venn-SpikeIn}
 
 ```{r}
+#| echo: false
+
 library(dplyr)
 library(tidyr)
 library(purrr)
