@@ -21,7 +21,7 @@ Docs/           Archivos fuente de los informes
 
 ## Contexto
 
-Prácticas realizadas en el [Centro Nacional de Biotecnología (CNB-CSIC)](https://www.cnb.csic.es/) durante los meses de septiembre y octubre, bajo la supervisión de Fernando Corrales y Sergio Ciordia. El objetivo fue aprender a utilizar el paquete en desarrollo NADIA así como entender la importancia y el efecto de las diferentes normalizaciones y los diferentes métodos de imputación de los diferentes valores ausentes.
+Prácticas realizadas en el [Centro Nacional de Biotecnología (CNB-CSIC)](https://www.cnb.csic.es/) durante los meses de septiembre y octubre de 2026, bajo la supervisión de Fernando Corrales y Sergio Ciordia. El objetivo fue aprender a utilizar el paquete en desarrollo NADIA así como entender la importancia y el efecto de las diferentes normalizaciones y los diferentes métodos de imputación de los diferentes valores ausentes.
 
 ## Requisitos
 
