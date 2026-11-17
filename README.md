@@ -25,8 +25,8 @@ Prácticas realizadas en el [Centro Nacional de Biotecnología (CNB-CSIC)](https
 
 ## Requisitos
 
-- [Quarto](https://quarto.org/)[versión]
-- R >= [4.6.1] con el paquete NADIA (https://github.com/sciordia/NADIA.git)
+- [Quarto](https://quarto.org/)[1.8.27]
+- R >= [4.6.1] para el paquete [NADIA](https://github.com/sciordia/NADIA.git)
 
 ## Workflow
 
