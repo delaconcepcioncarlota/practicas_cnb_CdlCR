@@ -119,7 +119,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="valores-esperados-de-la-tasa-de-cambio" class="level3">
 <h3 class="anchored" data-anchor-id="valores-esperados-de-la-tasa-de-cambio">Valores esperados de la tasa de cambio</h3>
-<p>Se establecen los valores esperados de cambio en funcion de las proporciones de cada especie en cada muestra. Dado que no se podría calcular el cociente de 0, se ha establecido 1 como valor mínimo, de tal manera que las tasas de cambios esperadas en el caso de las comparaciones con la muestra D, no son completamente realistas.</p>
+<p>Se establecen los valores esperados de cambio en función de las proporciones de cada especie en cada muestra. Dado que no se podría calcular el cociente de 0, se ha establecido 1 como valor mínimo, de tal manera que las tasas de cambios esperadas en el caso de las comparaciones con la muestra D, no son completamente realistas.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>expected_log2FC <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">c</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                    <span class="co">#B-A</span></span>
@@ -142,9 +142,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">expected_logFC =</span> expected_log2FC)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="asociacion-de-proteinas-a-especias" class="level3">
-<h3 class="anchored" data-anchor-id="asociacion-de-proteinas-a-especias">Asociacion de proteinas a especias</h3>
-<p>La asociación de proteinas a especies permite ver como se distribuyen los resultados. Se espera que los verdaderos negativos pertenezcan a proteinas humanas mientras que los verdaderos positivos pertenezcan a proteinas de <em>E. coli</em> o <em>S. cerevisiae</em></p>
+<section id="asociación-de-proteínas-a-especias" class="level3">
+<h3 class="anchored" data-anchor-id="asociación-de-proteínas-a-especias">Asociación de proteínas a especias</h3>
+<p>La asociación de proteínas a especies permite ver como se distribuyen los resultados. Se espera que los verdaderos negativos pertenezcan a proteínas humanas mientras que los verdaderos positivos pertenezcan a proteínas de <em>E. coli</em> o <em>S. cerevisiae</em></p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>spikein_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../../../Report_Species.tsv"</span>, <span class="at">sep=</span><span class="st">"</span><span class="sc">\t</span><span class="st">"</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -154,16 +154,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 </section>
-<section id="imputaciones-a-testar" class="level2">
-<h2 class="anchored" data-anchor-id="imputaciones-a-testar">Imputaciones a testar</h2>
-<p>Se establecen <em>vsn</em> y vsn como los métodos de normalizacion óptimos dados los resultados en el benchmarking de la propia normalización</p>
+<section id="imputaciónes-a-testar" class="level2">
+<h2 class="anchored" data-anchor-id="imputaciónes-a-testar">imputaciónes a testar</h2>
+<p>Se establecen <em>vsn</em> y vsn como los métodos de normalización óptimos dados los resultados en el benchmarking de la propia normalización</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>combinations_vsn_combs_imput <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Imputacion sin distinguir valores MAR y MNAR</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#imputación sin distinguir valores MAR y MNAR</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">norm_meth =</span> <span class="st">"vsn"</span>, <span class="at">imp_meth =</span> <span class="st">"Impseq"</span>, <span class="at">mar_meth =</span> <span class="st">"Impseq"</span>, <span class="at">mnar_meth =</span> <span class="st">"min"</span>),</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Imputacion combo</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#imputación combo</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">norm_meth =</span> <span class="st">"vsn"</span>, <span class="at">imp_meth =</span> <span class="st">"combo"</span>, <span class="at">mar_meth =</span> <span class="st">"Impseq"</span>, <span class="at">mnar_meth =</span> <span class="st">"QRILC"</span>),</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">norm_meth =</span> <span class="st">"vsn"</span>, <span class="at">imp_meth =</span> <span class="st">"combo"</span>, <span class="at">mar_meth =</span> <span class="st">"Impseq"</span>, <span class="at">mnar_meth =</span> <span class="st">"MinDet"</span>),</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">norm_meth =</span> <span class="st">"vsn"</span>, <span class="at">imp_meth =</span> <span class="st">"combo"</span>, <span class="at">mar_meth =</span> <span class="st">"Impseq"</span>, <span class="at">mnar_meth =</span> <span class="st">"MinProb"</span>),</span>
@@ -180,7 +180,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 <section id="funcion-de-nombrar" class="level2">
-<h2 class="anchored" data-anchor-id="funcion-de-nombrar">Funcion de nombrar</h2>
+<h2 class="anchored" data-anchor-id="funcion-de-nombrar">función de nombrar</h2>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>making_names <span class="ot">&lt;-</span> <span class="cf">function</span>(combin){</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(combin<span class="sc">$</span>imp_meth <span class="sc">==</span>  <span class="st">"combo"</span>){</span>
@@ -204,8 +204,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="bucle-de-processing-con-benchmarking-unico" class="level2">
-<h2 class="anchored" data-anchor-id="bucle-de-processing-con-benchmarking-unico">Bucle de processing con benchmarking unico</h2>
+<section id="bucle-de-processing-con-benchmarking-único" class="level2">
+<h2 class="anchored" data-anchor-id="bucle-de-processing-con-benchmarking-único">Bucle de processing con benchmarking único</h2>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>bm_vsn_combs_imput_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -278,10 +278,10 @@ Removed 18 rows with Species = NA (no mapping in species_df).</code></pre>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>all_classif_vsn_combs_imput <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, classif_vsn_combs_imput_list)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="benchmarking-multiple" class="level2">
-<h2 class="anchored" data-anchor-id="benchmarking-multiple">Benchmarking multiple</h2>
+<section id="benchmarking-múltiple" class="level2">
+<h2 class="anchored" data-anchor-id="benchmarking-múltiple">Benchmarking múltiple</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>bm_multi_results_vsn_combs_imput <span class="ot">&lt;-</span> <span class="fu">benchmarking_multiple</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>bm_multi_results_vsn_combs_imput <span class="ot">&lt;-</span> <span class="fu">benchmarking_múltiple</span>(</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">opdea_combined =</span> all_OpDEA_vsn_combs_imput,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">confusion_combined =</span> all_confusion_vsn_combs_imput,</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">classified_combined =</span> all_classif_vsn_combs_imput,</span>
@@ -307,14 +307,14 @@ Figure&nbsp;1: <strong>Ranking final de las métricas de OpDEA.</strong>
 <div id="fig-ext-rank-bars-vsn" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-ext-rank-bars-vsn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="./bm_vsn_combs_imput/bm_multiple_extended_ranking_bars.png" class="img-fluid figure-img">
+<img src="./bm_vsn_combs_imput/bm_múltiple_extended_ranking_bars.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ext-rank-bars-vsn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: <strong>Gráfico de barras de las métricas</strong>
 </figcaption>
 </figure>
 </div>
-<p>Al analizar las curvas ROC para cada comparación, el método de imputacion para valores ausentes aleatorios bpca tambien tiende a tomar las posiciones más altas alternando el método de imputacion de valores ausentes no aleatorios entre min y halfmin. Dependiendo de la diferencia real entre las muestras (<a href="#fig-ROC-comp-DC" class="quarto-xref">Figure&nbsp;3</a>). Como ocurre cuando se imputan valores con el método <em>Rlr</em>.</p>
+<p>Al analizar las curvas ROC para cada comparación, el método de imputación para valores ausentes aleatorios bpca también tiende a tomar las posiciones más altas alternando el método de imputación de valores ausentes no aleatorios entre min y halfmin. Dependiendo de la diferencia real entre las muestras (<a href="#fig-ROC-comp-DC" class="quarto-xref">Figure&nbsp;3</a>). Como ocurre cuando se imputan valores con el método <em>Rlr</em>.</p>
 <div id="fig-ROC-comp-DC" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-ROC-comp-DC-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">

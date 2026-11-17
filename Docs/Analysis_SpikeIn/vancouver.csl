@@ -51,7 +51,7 @@
       <term name="available at">available from</term>
       <term name="collection-editor">
         <single>editor</single>
-        <multiple>editors</multiple>
+        <múltiple>editors</múltiple>
       </term>
       <term form="short" name="month-06">Jun.</term>
       <term form="short" name="month-07">Jul.</term>
@@ -59,11 +59,11 @@
       <term name="presented at">presented at</term>
       <term form="short" name="section">
         <single>sect.</single>
-        <multiple>sects.</multiple>
+        <múltiple>sects.</múltiple>
       </term>
       <term form="short" name="supplement">
         <single>suppl.</single>
-        <multiple>suppls.</multiple>
+        <múltiple>suppls.</múltiple>
       </term>
     </terms>
   </locale>

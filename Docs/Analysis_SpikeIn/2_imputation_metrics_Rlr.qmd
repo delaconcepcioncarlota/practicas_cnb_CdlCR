@@ -1,5 +1,5 @@
 ---
-title: "Análisis de los métodos de imputacion de valores normalizando con *Rlr*"
+title: "Análisis de los métodos de imputación de valores normalizando con *Rlr*"
 author: "Carlota de la Concepción Ruiz"
 format: html
 editor: source
@@ -21,9 +21,9 @@ imp_se_Rlr <- im_prepare_se(
     verbose = FALSE)
 ```
 
-## Obtencion de valores métricos para la selección del método de imputacion
+## Obtención de valores métricos para la selección del método de imputación
 
-Se selecciona *pattern = "from_data"* con el objetivo de que la distribución que usada para evaluar las métricas sea lo más parecida a la real.
+Se selecciona *pattern = "from_data"* con el objetivo de que la distribución que se usa para evaluar las métricas sea lo más parecida a la real.
 
 ```{r imp_mtr_rlr}
 im_metr_Rlr <- imputation_metrics(
@@ -34,9 +34,9 @@ im_metr_Rlr <- imputation_metrics(
     verbose = FALSE)
 ```
 
-## Análisis de las métricas para selección del métodos de imputacion
+## Análisis de las métricas para selección de los métodos de imputación
 
-Al igual que en los métodos de normalización, los métodos de imputacion cuentan con unas métricas para su evaluación. Así, de la misma manera se rankean los diferentes métodos con valores del 1 al número de métodos evaluados y promedia la posición (@tbl-metrics-Rlr).
+Al igual que en los métodos de normalización, los métodos de imputación cuentan con unas métricas para su evaluación. Así, de la misma manera se rankean los diferentes métodos con valores del 1 al número de métodos evaluados y promedia la posición (@tbl-metrics-Rlr).
 
 |*Method*    |  *NRMSE*|   *SOR*| *PSS*| *ACC_OI*| *Rank_Mean*|
 |:---------|:-----:|:----:|---:|:-----:|:--------:|
@@ -56,7 +56,7 @@ Al igual que en los métodos de normalización, los métodos de imputacion cuent
 |zero      | 6.3182| 30170|  NA|     NA|     14.00|
 : **Tabla de métodos de imputación de valores MAR tras normalizar con Rlr** {#tbl-metrics-Rlr}
 
-Las métricas para valorar los métodos de imputacion usadas por [NAguider](10.1093/nar/gkaa498) solo son útiles para los métodos MAR. Por ello, tras el análisis del método de normalización más optimo para estos datos, se selecciona el mejor método de imputación para los valores ausentes debido a causas aleatorias mediante las métricas NRMSE, SOR, PSS y ACC_OI determinadas por NAguider.
+Las métricas para valorar los métodos de imputación usadas por [NAguider](10.1093/nar/gkaa498) solo son útiles para los métodos MAR. Por ello, tras el análisis del método de normalización más optimo para estos datos, se selecciona el mejor método de imputación para los valores ausentes debido a causas aleatorias mediante las métricas NRMSE, SOR, PSS y ACC_OI determinadas por NAguider.
 
 Así, el método que parece ser el más adecuado para imputar los valores ausentes tipo MAR es el método *Impseq* ya que es el que se posiciona como primero según la media.
 
@@ -66,4 +66,4 @@ En las gráficas (@fig-metrics-Rlr) se observan las puntuaciones de cada métric
 
 ![**Ranking según las métricas de NAguider para los diferentes métodos de imputación tras normalizar con Rlr**](./imputation_metrics_Rlr/ranking.png){#fig-ranking-Rlr}
 
-La imagen superior (@fig-ranking-Rlr) muestra que el mejor método de imputación de datos es *Impseq*, además de ser confirmado por tener el menor RankMean, en tres de las cuatro métricas tiene un valor de uno, es decir, tiene el valor óptimo de entre todos los métodos de imputación. Por ello se seleccionará como método de imputacion de datos a la hora de realizar el análisis comparativo.
+La imagen superior (@fig-ranking-Rlr) muestra que el mejor método de imputación de datos es *Impseq*, además de ser confirmado por tener el menor RankMean, en tres de las cuatro métricas tiene un valor de uno, es decir, tiene el valor óptimo de entre todos los métodos de imputación. Por ello se seleccionará como método de imputación de datos a la hora de realizar el análisis comparativo.

@@ -35,7 +35,7 @@ expected_change <- data.frame(
     expected_logFC = expected_log2FC)
 ```
 
-## Asociacion de proteinas a especias
+## Asociación de proteínas a especias
 
 ```{r}
 
@@ -47,17 +47,17 @@ species_pg_df <- data.frame(Protein.IDs = spikein_data$PG.ProteinGroups,
 
 ```
 
-## Imputaciones a testar
+## imputaciónes a testar
 
-Se establecen *Rlr* y vsn como los métodos de normalizacion óptimos dados los resultados en el benchmarking de la propia normalización
+Se establecen *Rlr* y vsn como los métodos de normalización óptimos dados los resultados en el benchmarking de la propia normalización
 
 ```{r}
 combinations_Rlr_combs_imput <- list(
 
-  #Imputacion sin distinguir valores MAR y MNAR
+  #imputación sin distinguir valores MAR y MNAR
   list(norm_meth = "Rlr", imp_meth = "Impseq", mar_meth = "Impseq", mnar_meth = "min"),
   
-  #Imputacion combo
+  #imputación combo
   list(norm_meth = "Rlr", imp_meth = "combo", mar_meth = "Impseq", mnar_meth = "QRILC"),
   list(norm_meth = "Rlr", imp_meth = "combo", mar_meth = "Impseq", mnar_meth = "MinDet"),
   list(norm_meth = "Rlr", imp_meth = "combo", mar_meth = "Impseq", mnar_meth = "MinProb"),
@@ -73,7 +73,7 @@ combinations_Rlr_combs_imput <- list(
   )
 ```
 
-## Funcion de nombrar
+## función de nombrar
 
 ```{r}
 
@@ -100,7 +100,7 @@ making_names <- function(combin){
 
 ```
 
-## Bucle de processing con benchmarking unico
+## Bucle de processing con benchmarking único
 
 ```{r}
 
@@ -155,13 +155,13 @@ all_classif_Rlr_combs_imput <- do.call(rbind, classif_Rlr_combs_imput_list)
 
 ```
 
-## Benchmarking multiple
+## Benchmarking múltiple
 
 Se ejecuta de la misma manera que para *cycloess*, el benchmarking comparativo de todas las combinaciones.
 
 ```{r}
 
-bm_multi_results_Rlr_combs_imput <- benchmarking_multiple(
+bm_multi_results_Rlr_combs_imput <- benchmarking_múltiple(
   opdea_combined = all_OpDEA_Rlr_combs_imput,
   confusion_combined = all_confusion_Rlr_combs_imput,
   classified_combined = all_classif_Rlr_combs_imput,
@@ -176,21 +176,22 @@ bm_multi_results_Rlr_combs_imput <- benchmarking_multiple(
 
 ![**Ranking final de las métricas de OpDEA.**](./bm_Rlr_combs_imput/OpDEA_final_ranking_Rlr_combs_imputation.png){#fig-OpDEA-Rlr-metrics}
 
-Según la gráfica superior @fig-fig-OpDEA-Rlr-metrics, donde se muestra la posición según las métricas OpDEA, al igual que en la @fig-ext-rank-bars-Rlr, el mejor método de imputación de valores cuando la normalización se realiza mediante *Rlr_combs*, es la combinación de *Impseq* y *zero*. El método *Impseq* se usa para imputar valores en los valores ausentes aleatorios mientras que el método *zero* se utiliza en los valores ausentes no aleatorios.
+Según la gráfica superior @fig-OpDEA-Rlr-metrics, donde se muestra la posición según las métricas OpDEA, al igual que en la @fig-ext-rank-bars-Rlr, el mejor método de imputación de valores cuando la normalización se realiza mediante *Rlr_combs*, es la combinación de *Impseq* y *zero*. El método *Impseq* se usa para imputar valores en los valores ausentes aleatorios mientras que el método *zero* se utiliza en los valores ausentes no aleatorios.
 
-![**Gráfico de barras de las métricas**](./bm_Rlr_combs_imput/bm_multiple_extended_ranking_bars.png){#fig-ext-rank-bars-Rlr}
+![**Gráfico de barras de las métricas**](./bm_Rlr_combs_imput/bm_múltiple_extended_ranking_bars.png){#fig-ext-rank-bars-Rlr}
 
 Al analizar las curvas ROC los resultados son muy dependiendes de la comparación. Sin embargo y de manera general, se puede decir que los método de imputación de valores ausentes no aleatorios *zero*, *halfmin* y *min* limitan el número restringido de falsos positivos (@fig-ROC-comp-DC).
 
 ![**Curva ROC de la comparación D-C cuando se modifica el método de imputación de valores**](./bm_Rlr_combs_imput/by_comparison/bm_roc_zoom_D-C.png){#fig-ROC-comp-DC}
 
-Al analizar la sensibilidad de cada combinación, el método de imputación *Impseq* para los valores ausentes aleatorios combinado con el método de imputacion *min* para valores ausentes no aleatorios tambien toma posiciones altas cuando la diferencia entre muestras es más notoria. Especialmente, cuando la muestra D no se está comparando. Esto indica que la combinación del método *Impseq* y *min*, no es tan capaz de controlar los falsos negativos cuando la diferencia entre muestras es leve. Esto se puede observar en los gráficos siguientes (@fig-conf-stack-CA, @fig-conf-stack-DC).
+Al analizar la sensibilidad de cada combinación, el método de imputación *Impseq* para los valores ausentes aleatorios combinado con el método de imputación *min* para valores ausentes no aleatorios también toma posiciones altas cuando la diferencia entre muestras es más notoria. Especialmente, cuando la muestra D no se está comparando. Esto indica que la combinación del método *Impseq* y *min*, no es tan capaz de controlar los falsos negativos cuando la diferencia entre muestras es leve. Esto se puede observar en los gráficos siguientes (@fig-conf-stack-CA, @fig-conf-stack-DC).
 
-:::{fig-conf-stack}
+::: {fig-conf-stack}
 
 ![Matriz de confusión para las comparación de las muestras C y A](./bm_Rlr_combs_imput/by_comparison/conf_matrix_CA.png){#fig-conf-stack-CA}
 
 ![Matriz de confusión para las comparación de las muestras D y C](./bm_Rlr_combs_imput/by_comparison/conf_matrix_DC.png){#fig-conf-stack-DC}
 
 **Matrices de confusión para evaluar la imputación de valores con diferentes métodos.**
+
 :::

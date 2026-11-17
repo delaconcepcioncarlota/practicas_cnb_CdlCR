@@ -34,7 +34,7 @@ expected_change <- data.frame(
     expected_logFC = expected_log2FC)
 ```
 
-## Asociacion de proteinas a especias
+## Asociación de proteínas a especias
 
 ```{r}
 
@@ -46,9 +46,9 @@ species_pg_df <- data.frame(Protein.IDs = spikein_data$PG.ProteinGroups,
 
 ```
 
-## Imputaciones a testar
+## imputaciónes a testar
 
-Se establecen *cycloess*, *vsn* y *Rlr* como los métodos de normalizacion óptimos dados los resultados en el benchmarking de la propia normalización
+Se establecen *cycloess*, *vsn* y *Rlr* como los métodos de normalización óptimos dados los resultados en el benchmarking de la propia normalización
 
 ```{r}
 combinations_final_min <- list(
@@ -63,7 +63,7 @@ combinations_final_min <- list(
   )
 ```
 
-## Funcion de nombrar
+## función de nombrar
 
 ```{r}
 
@@ -90,7 +90,7 @@ making_names <- function(combin){
 
 ```
 
-## Bucle de processing con benchmarking unico
+## Bucle de processing con benchmarking único
 
 ```{r}
 
@@ -146,11 +146,11 @@ all_classif_final_min <- do.call(rbind, classif_final_min_list)
 
 ```
 
-## Benchmarking multiple
+## Benchmarking múltiple
 
 ```{r}
 
-bm_multi_results_final_min <- benchmarking_multiple(
+bm_multi_results_final_min <- benchmarking_múltiple(
   opdea_combined = all_OpDEA_final_min,
   confusion_combined = all_confusion_final_min,
   classified_combined = all_classif_final_min,
@@ -173,7 +173,7 @@ Se observa en la @fig-ROC-comp-DC que cuando las abundancias entre condiciones n
 
 ![Curva ROC de la comparación D-C cuando se modifica el método de imputación de valores](./bm_final/by_comparison/bm_roc_zoom_DC.png){#fig-ROC-comp-DC}
 
-Como se observa en la @fig-comf-stack-min el método de normalización de *cycloess* introduce un numero menor de falsos positivos, lo que se verá representado en el número de proteinas siginificativas detectadas entre los diferentes métodos de normalización.
+Como se observa en la @fig-comf-stack-min el método de normalización de *cycloess* introduce un número menor de falsos positivos, lo que se verá representado en el número de proteínas siginificativas detectadas entre los diferentes métodos de normalización.
 
 ![**Matriz de confusión para todas las combinaciones en todas las comparaciones**](./bm_final/conf_stack_min.png){#fig-comf-stack-min}
 
@@ -202,17 +202,17 @@ pp_Rlr_Impseq_min <- process_proteomics(preproc_data_spikein,
                                        mnar_method = "min",
                                        verbose = FALSE)
 
-lista_proteinas <- list(
+lista_proteínas <- list(
   "cycloess_Impseq_min"   = pp_cycloess_Impseq_min$PCA_Input$FeatureID[pp_cycloess_Impseq_min$PCA_Input$sig_any],
   "vsn_Impseq_min"     = pp_vsn_Impseq_min$PCA_Input$FeatureID[pp_vsn_Impseq_min$PCA_Input$sig_any],
   "Rlr_Impseq_min" = pp_Rlr_Impseq_min$PCA_Input$FeatureID[pp_Rlr_Impseq_min$PCA_Input$sig_any]
 )
 
-for (nombre in names(lista_proteinas)) {
+for (nombre in names(lista_proteínas)) {
   
-  proteinas <- lista_proteinas[[nombre]]
+  proteínas <- lista_proteínas[[nombre]]
   
-  df_exportar <- data.frame(FeatureID = proteinas, stringsAsFactors = FALSE)
+  df_exportar <- data.frame(FeatureID = proteínas, stringsAsFactors = FALSE)
   
   nombre_archivo <- paste0("Reporte_", nombre, ".csv")
   
@@ -223,11 +223,11 @@ df_cycloess_Impseq_min <- pp_cycloess_Impseq_min$PCA_Input
 
 ```
 
-Tras la exportación de los grupos proteicos diferenciales, se ha generado un diagrama de Venn (@fig-Venn-SpikeIn) donde se observa que, el 65.07% de las proteinas diferenciales exportadas es común e independiente al método de normalización de los datos.
+Tras la exportación de los grupos proteicos diferenciales, se ha generado un diagrama de Venn (@fig-Venn-SpikeIn) donde se observa que, el 65,07% de las proteínas diferenciales exportadas es común e independiente al método de normalización de los datos.
 
-El solapamiento es mayor cuando las proteinas exportadas son las obtenidas tras normalizar por Rlr y vsn. Esto se debe a que el método cycloess devuelve un número de falsos positivos menor que los métodos Rlr y vsn. Por ello, la confianza en que de esos 4386 grupos proteicos detectados como diferenciales, es superior a la confianza sobre los 1271 grupos proteicos comunes entre los diferenciales obtenidos tras la normalización con Rlr y vsn.
+El solapamiento es mayor cuando las proteínas exportadas son las obtenidas tras normalizar por Rlr y vsn. Esto se debe a que el método cycloess devuelve un número de falsos positivos menor que los métodos Rlr y vsn. Por ello, la confianza en que de esos 4386 grupos proteicos detectados como diferenciales, es superior a la confianza sobre los 1271 grupos proteicos comunes entre los diferenciales obtenidos tras la normalización con Rlr y vsn.
 
-![Diagrama de Venn de las proteinas diferencialmente expresadas de manera significativa entre los diferentes métodos de normalización.](./tfm_cdlcr/practicas_cnb_CdlCR/Docs/pics/intermediateFigures/SpikeIn_intermediateFigures/deepvenn_mnar_min.png){#fig-Venn-SpikeIn}
+![Diagrama de Venn de las proteínas diferencialmente expresadas de manera significativa entre los diferentes métodos de normalización.](./tfm_cdlcr/practicas_cnb_CdlCR/Docs/pics/intermediateFigures/SpikeIn_intermediateFigures/deepvenn_mnar_min.png){#fig-Venn-SpikeIn}
 
 ```{r}
 #| echo: false
@@ -358,7 +358,7 @@ pp_Rlr_Impseq_min_th <- process_proteomics(preproc_data_spikein,
                                        #export_dir = "C:/Users/Proteomica/Documents/tfm_cdlcr/practicas_cnb_CdlCR/Docs/Analysis_SpikeIn/bm_final_min/Rlr_Impseq_min_threshold",
                                        verbose = FALSE)
 
-lista_proteinas_th <- list(
+lista_proteínas_th <- list(
   "cycloess_Impseq_min_th"   = pp_cycloess_Impseq_min_th$PCA_Input$FeatureID[pp_cycloess_Impseq_min_th$PCA_Input$sig_any],
   "vsn_Impseq_min_th"     = pp_vsn_Impseq_min_th$PCA_Input$FeatureID[pp_vsn_Impseq_min_th$PCA_Input$sig_any],
   "Rlr_Impseq_min_th" = pp_Rlr_Impseq_min_th$PCA_Input$FeatureID[pp_Rlr_Impseq_min_th$PCA_Input$sig_any]

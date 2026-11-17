@@ -26,7 +26,7 @@ expected_change <- data.frame(
     expected_logFC = expected_log2FC)
 ```
 
-### Asociacion de proteínas a especies
+### Asociación de proteínas a especies
 
 La asociación de proteínas a especies permite ver como se distribuyen los resultados. Se espera que los verdaderos negativos pertenezcan a proteínas humanas mientras que los verdaderos positivos pertenezcan a proteínas de *E. coli* o *S. cerevisiae*
 
@@ -42,18 +42,18 @@ species_pg_df <- data.frame(Protein.IDs = spikein_data$PG.ProteinGroups,
 
 ```
 
-### Imputaciones a testar
+### imputaciónes a testar
 
-Se establecen *cycloess*, *vsn* y *Rlr* como los métodos de normalizacion óptimos dados los resultados en el análisis comparativo de la normalización. De la misma manera que en el análisis de los métodos de imputación de valores MAR, solo se muestra el código para el método de normalización *cycloess*, para los demás métodos probados, el archivo se encuentra en el repositorio de GitHub indicado en la memoria.
+Se establecen *cycloess*, *vsn* y *Rlr* como los métodos de normalización óptimos dados los resultados en el análisis comparativo de la normalización. De la misma manera que en el análisis de los métodos de imputación de valores MAR, solo se muestra el código para el método de normalización *cycloess*, para los demás métodos probados, el archivo se encuentra en el repositorio de GitHub indicado en la memoria.
 
 ```{r combinations cycloess}
 combinations_cycloess_combs_imput <- list(
 
-  #Imputacion sin distinguir valores MAR y MNAR
+  #imputación sin distinguir valores MAR y MNAR
   list(norm_meth = "cycloess", imp_meth = "Impseq", 
        mar_meth = "Impseq", mnar_meth = "min"),
   
-  #Imputacion combo
+  #imputación combo
   list(norm_meth = "cycloess", imp_meth = "combo", 
        mar_meth = "Impseq", mnar_meth = "QRILC"),
   list(norm_meth = "cycloess", imp_meth = "combo", 
@@ -110,7 +110,7 @@ making_names <- function(combin){
 
 ### Bucle de procesamiento con análisis comparativo único
 
-Para llevar a cabo el evaluación de las diferentes combinaciones de métodos de normalización e imputación de los datos, se procesan los datos de manera iterativa y y se ejecuta el *benchmarking* individual para cada combinación. Durante el bucle, los resultados se almacenan en las listas inicializadas previamente, se les añade como identificador el nombre de la combinación y se combinan en un objeto unificado al final del bloque de código. Así, adaptamos la salida de la funcion de *benchmarking* unico a la entrada de la funcion de *benchmarking* multiple
+Para llevar a cabo el evaluación de las diferentes combinaciones de métodos de normalización e imputación de los datos, se procesan los datos de manera iterativa y y se ejecuta el *benchmarking* individual para cada combinación. Durante el bucle, los resultados se almacenan en las listas inicializadas previamente, se les añade como identificador el nombre de la combinación y se combinan en un objeto unificado al final del bloque de código. Así, adaptamos la salida de la función de *benchmarking* único a la entrada de la función de *benchmarking* múltiple
 
 ```{r bm single final zero, results = "hide", warning = FALSE}
 #Lists to store benchmarking information
@@ -177,13 +177,13 @@ all_classif_cycloess_combs_imput <- do.call(rbind,
 
 ```
 
-## Benchmarking multiple
+## Benchmarking múltiple
 
-Con los objetos creados anteriormente, podemos utilizar la función del *benchmarking* multiple. 
+Con los objetos creados anteriormente, podemos utilizar la función del *benchmarking* múltiple. 
 
 ```{r bm multi cycloess}
 # Comparación de los resultados individuales
-bm_multi_results_cycloess_combs_imput <- benchmarking_multiple(
+bm_multi_results_cycloess_combs_imput <- benchmarking_múltiple(
   opdea_combined = all_OpDEA_cycloess_combs_imput,
   confusion_combined = all_confusion_cycloess_combs_imput,
   classified_combined = all_classif_cycloess_combs_imput,
@@ -201,14 +201,14 @@ el gráfico de las métricas de NAguideR (@fig-extended-cycloess), el mejor mét
 
 ::: {#fig-comparativa-cycloess layout-ncol=2}
 
-![Gráfico de barras de las métricas OpDEA](./bm_cycloess_combs_imput/bm_cycloess_combs_multi/bm_multiple_ranking_bars_mean.png){#fig-OpDEA-cycloess}
+![Gráfico de barras de las métricas OpDEA](./bm_cycloess_combs_imput/bm_cycloess_combs_multi/bm_múltiple_ranking_bars_mean.png){#fig-OpDEA-cycloess}
 
-![Gráfico de barras de las métricas](./bm_cycloess_combs_imput/bm_cycloess_combs_multi/bm_multiple_extended_ranking_bars.png){#fig-extended-cycloess}
+![Gráfico de barras de las métricas](./bm_cycloess_combs_imput/bm_cycloess_combs_multi/bm_múltiple_extended_ranking_bars.png){#fig-extended-cycloess}
 
 **Gráficos de comparación de métodos de imputación de valores combinados en función de diferentes métricas.**
 :::
 
-Las curvas ROC para cada comparación (@fig-roc-comparaciones) corroboran que la combinación de los métodos *Impseq* y *zero* es la que devuelve menor número de falsos positivos tras la imputación de valores. A pesar de que esta combinación no se muestre siempre en las primeras posiciones, tiende a obtener valores altos de pAUC cercanos a los de las posiciones iniciales en la mayoria de los casos.
+Las curvas ROC para cada comparación (@fig-roc-comparaciones) corroboran que la combinación de los métodos *Impseq* y *zero* es la que devuelve menor número de falsos positivos tras la imputación de valores. A pesar de que esta combinación no se muestre siempre en las primeras posiciones, tiende a obtener valores altos de pAUC cercanos a los de las posiciones iniciales en la mayoría de los casos.
 
 ::: {#fig-roc-comparaciones layout-ncol=3}
 
@@ -227,6 +227,6 @@ Las curvas ROC para cada comparación (@fig-roc-comparaciones) corroboran que la
 **Representación de las curvas ROC para las seis comparaciones realizadas entre los distintos grupos experimentales.**
 :::
 
-Esta combinación tambien toma posiciones altas al análizar la matriz de confusión. En ella se observan el número de falsos positivos, falsos negativos, verdaderos positivos y verdaderos negativos presentes en el análisis. Se observa en la @fig-conf-stacked-all-comb que el método de imputacion de valores MNAR *zero* es el que menor falsos positivos y falsos negativos devuelve de manera general. Además, se observa que el método de imputación *limpa* (y consiguiente estadístico), tiende a generar un alto número de falsos negativos. 
+Esta combinación también toma posiciones altas al análizar la matriz de confusión. En ella se observan el número de falsos positivos, falsos negativos, verdaderos positivos y verdaderos negativos presentes en el análisis. Se observa en la @fig-conf-stacked-all-comb que el método de imputación de valores MNAR *zero* es el que menor falsos positivos y falsos negativos devuelve de manera general. Además, se observa que el método de imputación *limpa* (y consiguiente estadístico), tiende a generar un alto número de falsos negativos. 
 
-![**Matriz de confusión para las diferentes combinaciones**.](./bm_cycloess_combs_imput/bm_cycloess_combs_multi/bm_multiple_confusion_stacked.png){#fig-conf-stacked-all-comb}
+![**Matriz de confusión para las diferentes combinaciones**.](./bm_cycloess_combs_imput/bm_cycloess_combs_multi/bm_múltiple_confusion_stacked.png){#fig-conf-stacked-all-comb}

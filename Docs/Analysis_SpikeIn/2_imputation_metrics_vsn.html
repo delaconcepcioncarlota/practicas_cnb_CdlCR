@@ -8,7 +8,7 @@
 
 <meta name="author" content="Carlota de la Concepción Ruiz">
 
-<title>Análisis de los métodos de imputacion de valores normalizando con vsn</title>
+<title>Análisis de los métodos de imputación de valores normalizando con vsn</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -83,7 +83,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Análisis de los métodos de imputacion de valores normalizando con <em>vsn</em></h1>
+<h1 class="title">Análisis de los métodos de imputación de valores normalizando con <em>vsn</em></h1>
 </div>
 
 
@@ -125,9 +125,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="obtencion-de-valores-métricos-para-la-selección-del-método-de-imputacion" class="level2">
-<h2 class="anchored" data-anchor-id="obtencion-de-valores-métricos-para-la-selección-del-método-de-imputacion">Obtencion de valores métricos para la selección del método de imputacion</h2>
-<p>Se selecciona <em>pattern = “from_data”</em> con el objetivo de que la distribución que usada para evaluar las métricas sea lo más parecida a la real.</p>
+<section id="obtención-de-valores-métricos-para-la-selección-del-método-de-imputación" class="level2">
+<h2 class="anchored" data-anchor-id="obtención-de-valores-métricos-para-la-selección-del-método-de-imputación">Obtención de valores métricos para la selección del método de imputación</h2>
+<p>Se selecciona <em>pattern = “from_data”</em> con el objetivo de que la distribución que se usa para evaluar las métricas sea lo más parecida a la real.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>im_metr_vsn <span class="ot">&lt;-</span> <span class="fu">imputation_metrics</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    imp_se_vsn,</span>
@@ -148,9 +148,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="análisis-de-las-métricas-para-selección-del-métodos-de-imputacion" class="level2">
-<h2 class="anchored" data-anchor-id="análisis-de-las-métricas-para-selección-del-métodos-de-imputacion">Análisis de las métricas para selección del métodos de imputacion</h2>
-<p>Al igual que en los métodos de normalización, los métodos de imputacion cuentan con unas métricas para su evaluación. Así, de la misma manera se rankean los diferentes métodos con valores del 1 al número de métodos evaluados y promedia la posición (<a href="#tbl-metrics-vsn" class="quarto-xref">Table&nbsp;1</a>).</p>
+<section id="análisis-de-las-métricas-para-selección-del-métodos-de-imputación" class="level2">
+<h2 class="anchored" data-anchor-id="análisis-de-las-métricas-para-selección-del-métodos-de-imputación">Análisis de las métricas para selección de los métodos de imputación</h2>
+<p>Al igual que en los métodos de normalización, los métodos de imputación cuentan con unas métricas para su evaluación. Así, de la misma manera se rankean los diferentes métodos con valores del 1 al número de métodos evaluados y promedia la posición (<a href="#tbl-metrics-vsn" class="quarto-xref">Table&nbsp;1</a>).</p>
 <div id="tbl-metrics-vsn" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-metrics-vsn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -307,7 +307,7 @@ Figure&nbsp;2: <strong>Ranking según las métricas de NAguider para los diferen
 </figcaption>
 </figure>
 </div>
-<p>La imagen superior (<a href="#fig-ranking-vsn" class="quarto-xref">Figure&nbsp;2</a>) muestra que el mejor método de imputación de datos es <em>Impseq</em>, además de ser confirmado por tener el menor RankMean, en tres de las cuatro métricas tiene un valor de uno, es decir, tiene el valor óptimo de entre todos los métodos de imputación. Por ello se seleccionará como método de imputacion de datos a la hora de realizar el análisis comparativo.</p>
+<p>La imagen superior (<a href="#fig-ranking-vsn" class="quarto-xref">Figure&nbsp;2</a>) muestra que el mejor método de imputación de datos es <em>Impseq</em>, además de ser confirmado por tener el menor RankMean, en tres de las cuatro métricas tiene un valor de uno, es decir, tiene el valor óptimo de entre todos los métodos de imputación. Por ello se seleccionará como método de imputación de datos a la hora de realizar el análisis comparativo.</p>
 </section>
 
 </main>
