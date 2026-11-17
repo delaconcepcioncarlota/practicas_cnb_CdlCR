@@ -46,6 +46,6 @@ Prácticas realizadas en el [Centro Nacional de Biotecnología (CNB-CSIC)](https
 
 ## Dirección
 
-- Fernando Corrales
-- [Sergio Ciordia](https://github.com/sciordia)
+- [Fernando Corrales](https://orcid.org/0000-0002-0231-5159)
+- [Sergio Ciordia](https://orcid.org/0000-0002-5726-853X)
 
