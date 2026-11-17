@@ -30,7 +30,7 @@ En cuanto a los métodos de normalización e imputación de valores MAR, se han 
 
 ## Tratamiento de los datos
 
-### Preprocesamiento de los datos crudos y obtencion de métodos de normalizacion e imputación
+### Preprocesamiento de los datos crudos y obtención de métodos de normalización e imputación
 
 En primer lugar se ha comprobado que los datos exportados de Spectronaut corresponden con el formato que el paquete NADIA gestiona. Se observa que los nombres de las columnas son correctos. Sin embargo, las condiciones están indicadas como: "24H 0MTA", "24H 10MTA"... Y por ello, se ha de modificar la columna de condiciones cambiando el espacio por una barra baja.
 
@@ -51,7 +51,7 @@ write.table(datos_mta, file = tsv_nadia, sep = "\t", row.names = FALSE, quote = 
 
 ```
 
-Se ha automatizado el proceso de selección de métodos de normalizacion e imputacion de datos (para valores ausentes aleatorios). Esta funcion, automáticamente guarda la salida de las funciones que evaluan las métricas en la carptea donde se encuentran los datos
+Se ha automatizado el proceso de selección de métodos de normalización e imputación de datos (para valores ausentes aleatorios). Esta funcion, automáticamente guarda la salida de las funciones que evaluan las métricas en la carptea donde se encuentran los datos
 
 ```{r preprocessing and metrics MTA}
 #| results: hide
@@ -64,7 +64,7 @@ c("h24_0MTA","h24_10MTA", "h24_50MTA", "h48_0MTA","h48_10MTA", "h48_50MTA"))
 
 ```
 
-Si bien el proceso de selección de método de normalización e imputación de los datos, se ha automatizado, se confirma de manera manual que el método seleccionado es el óptimo. Así, en la @fig-norm-pc1 se puede observar que el mejor método de imputacion de valores es vsn a pesar de que al observar la @tbl-normalization-metrics el valor medio final de posicion es igual para vsn que para cycloess, dado que la varianza explicada por el primer componente es mayor para vsn, este será el método de normalización seleccionado.
+Si bien el proceso de selección de método de normalización e imputación de los datos, se ha automatizado, se confirma de manera manual que el método seleccionado es el óptimo. Así, en la @fig-norm-pc1 se puede observar que el mejor método de imputación de valores es vsn a pesar de que al observar la @tbl-normalization-metrics el valor medio final de posicion es igual para vsn que para cycloess, dado que la varianza explicada por el primer componente es mayor para vsn, este será el método de normalización seleccionado.
 
 ![Gráfico de barras de la varianza explicada por el componente principal 1 de cada una de los métodos de normalización de datos](./norm_metrics/nm_pc1_ranking.png){#fig-norm-pc1}
 
@@ -83,7 +83,7 @@ Si bien el proceso de selección de método de normalización e imputación de l
 |   GlobalMean    |    12    |    11     |    11    |    5     |    3     |    8.4     |
 |    meanNorm     |    11    |    12     |    10    |    8     |    2     |    8.6     |
 
-: Tabla con las puntuaciones de PRONE y el grado de correlación y separación entre FIX ¿?variables para los métodos de normalización. {#tbl-normalization-metrics}
+: Tabla con las puntuaciones de PRONE y el grado de correlación y separación entre muestras para los métodos de normalización. {#tbl-normalization-metrics}
 
 FIX: How normalisation methods are evaluated -\> across intra-cond 
 
@@ -91,11 +91,11 @@ Los tres primeros permiten conseguir una menor var entre las bioreps de cada con
 
 ### Selección del método de imputación para valores MNAR
 
-El paquete NADIA permite analizar la capadidad de imputar valores de los diferentes metodos de imputacion MAR, esto se debe a que las métricas establecidas son aquellas usadas por NAguideR (FIX cita).
+El paquete NADIA permite analizar la capadidad de imputar valores de los diferentes metodos de imputación MAR, esto se debe a que las métricas establecidas son aquellas usadas por NAguideR @wang2020naguider.
 
-En cuanto a la selección del método de imputación de datos MAR, el más adecuado parece ser bpca (@tbl-imputation-metrics). Se analizan las gráficas una a una para ver la robustez de dicho orden.Para el caso de el NRMSE (@fig-nrmse), muestra los valores más bajos, ligeramente inferior a los valores de Impseq e Impseqrob. Para la métrica SOR (@fig-sor), el mínimo valor lo obtiene la métrica Impseqrob, seguido por bpca y este por Impseq. En relacion con el PSS(@fig-pss), el método que menor puntuacion obtiene es missForest, obteniendo un valor inferior a la mitad del siguiente método. Estos siguientes métodos son bpca e Impseq. Finalmente, para la métrica ACC OI (@fig-acc-oi), los métodos bpca, Impseq, ImpseqRob y missForest obtienen la misma puntuacion (otros métodos tambien pero no destacan en otras métricas).
+En cuanto a la selección del método de imputación de datos MAR, el más adecuado parece ser bpca (@tbl-imputation-metrics). Se analizan las gráficas una a una para ver la robustez de dicho orden.Para el caso de el NRMSE (@fig-nrmse), muestra los valores más bajos, ligeramente inferior a los valores de Impseq e Impseqrob. Para la métrica SOR (@fig-sor), el mínimo valor lo obtiene la métrica Impseqrob, seguido por bpca y este por Impseq. En relacion con el PSS(@fig-pss), el método que menor puntuacion obtiene es missForest, obteniendo un valor inferior a la mitad del siguiente método. Estos siguientes métodos son bpca e Impseq. Finalmente, para la métrica ACC OI (@fig-acc-oi), los métodos bpca, Impseq, ImpseqRob y missForest obtienen la misma puntuacion (otros métodos también pero no destacan en otras métricas).
 
-::: {#fig-metricas-imputacion layout-ncol="2"}
+::: {#fig-metricas-imputación layout-ncol="2"}
 ![NRMSE](./imp_metrics/im_nrmse.png){#fig-nrmse}
 
 ![SOR](./imp_metrics/im_sor.png){#fig-sor}
@@ -162,7 +162,7 @@ MTA_processed_data_auto <- process_proteomics(norm_imp_methods_MTA$preproc_data,
 
 ```
 
-### Obtención de proteinas diferenciales
+### Obtención de proteínas diferenciales
 
 #### Volcanos a 24h
 ```{r}
@@ -452,25 +452,25 @@ centroid_plot_any
 ```
 
 
-Hay un cluster de proteinas que de manera basal cuenta con poca abundancia. A medida que la concentracion de MTA aumenta, la abundancia tambien lo hace. Además, este mismo cluster, de manera basal tiene una abundancia mayor que a 24h y de la misma manera, cuando añades MTA, la abundancia de las proteinas de este cluster aumenta.
+Hay un clúster de proteínas que de manera basal cuenta con poca abundancia. A medida que la concentracion de MTA aumenta, la abundancia también lo hace. Además, este mismo clúster, de manera basal tiene una abundancia mayor que a 24h y de la misma manera, cuando añades MTA, la abundancia de las proteínas de este clúster aumenta.
 
-Esto indica que esas proteinas aumentan sin MTA ya que, a distintos tiempos, sin MTA, la abudancia es superior en el segundo tiempo. 
+Esto indica que esas proteínas aumentan sin MTA ya que, a distintos tiempos, sin MTA, la abudancia es superior en el segundo tiempo. 
 
-Por otro lado, hay un cluster con la tendencia contraria. 
+Por otro lado, hay un clúster con la tendencia contraria. 
 
-HAY QUE VER LAS FUNCIONES EN LAS QUE ESTÁN IMPLICADAS LAS PROTEINAS ESTAS
+HAY QUE VER LAS FUNCIONES EN LAS QUE ESTÁN IMPLICADAS LAS proteínaS ESTAS
 
 ## Análisis comparativo del uso de diferentes métodos de normalización e imputación de valores
 
 Dado que tanto vsn como cycloess se muestran como métodos adecuados para la normalización y de manera habitual, son los más óptimos, se analizan los métodos de imputación de valores MAR para ambos casos. 
 
-Como se ha observado en este documento, tras la normalización con el método vsn, el mejor método para imputar valores MAR parece ser bpca. Por otro lado, ya que no podemos corroborar cual es el mejor método para imputar valores MNAR, seleccionamos aquel que se encuentra en la peor posición. Así, normalizando los datos con el método vsn e imputando los valores MAR y MNAR con los métodos bpca y zero, respectivamente, se obtienen un 2428 proteinas significativamente diferenciales para alguna de las muestras. 
+Como se ha observado en este documento, tras la normalización con el método vsn, el mejor método para imputar valores MAR parece ser bpca. Por otro lado, ya que no podemos corroborar cual es el mejor método para imputar valores MNAR, seleccionamos aquel que se encuentra en la peor posición. Así, normalizando los datos con el método vsn e imputando los valores MAR y MNAR con los métodos bpca y zero, respectivamente, se obtienen un 2428 proteínas significativamente diferenciales para alguna de las muestras. 
 
-De manera paralela, en el HTML correspondiente al análisis de los métodos de imputación tras la normalización con [cycloess](MTA_data_report_cycloess.html) se determina que, los métodos de imputación óptimos son bpca para valores ausentes MAR y halfmin para los valores ausentes MNAR. Así, se obtienen *** proteinas diferenciales. 
+De manera paralela, en el HTML correspondiente al análisis de los métodos de imputación tras la normalización con [cycloess](MTA_data_report_cycloess.html) se determina que, los métodos de imputación óptimos son bpca para valores ausentes MAR y halfmin para los valores ausentes MNAR. Así, se obtienen *** proteínas diferenciales. 
 
 Se seleccionan aquellas diferenciales cuando se realiza la comparación de 50 µM frente a 0µM a 24 y a 48 horas.
 
 
 ## Resultados
 
-Se ha observado que la selección del método de normalización e imputación de valores no es trivial y esta debe ser evaluada durante el proceso. Finalmente, gracias a los diagramas de Venn podemos evaluar como de reales pueden llegar a ser las diferencias observadas. A pesar de no poder asegurar que no hay falsos positivos en las combinaciones, podemos asegurar que un 85% de las proteinas expresadas como diferenciales son coincidentes. Por ello, ambas combinaciones son adecuadas. Si se quiere asegurar un menor número de falsos positivos, en este caso, seleccionar el método de normalización cycloess sería lo óptimo. Así, aseguramos que el número de grupos proteicos no solapantes, es menor, lo que puede indicar que el número de falsos positivos no coincidentes (no conocemos los falsos positivos coincidentes ya que no contamos con proteinas spike-in), sea menor.  
+Se ha observado que la selección del método de normalización e imputación de valores no es trivial y esta debe ser evaluada durante el proceso. Finalmente, gracias a los diagramas de Venn podemos evaluar como de reales pueden llegar a ser las diferencias observadas. A pesar de no poder asegurar que no hay falsos positivos en las combinaciones, podemos asegurar que un 85% de las proteínas expresadas como diferenciales son coincidentes. Por ello, ambas combinaciones son adecuadas. Si se quiere asegurar un menor número de falsos positivos, en este caso, seleccionar el método de normalización cycloess sería lo óptimo. Así, aseguramos que el número de grupos proteicos no solapantes, es menor, lo que puede indicar que el número de falsos positivos no coincidentes (no conocemos los falsos positivos coincidentes ya que no contamos con proteínas spike-in), sea menor.  

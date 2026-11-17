@@ -59,7 +59,7 @@ write.table(datos_mta, file = tsv_nadia, sep = "\t", row.names = FALSE, quote = 
 
 ### Normalización e imputación de valores
 
-Tras la normalización según el método cycloess, se procede a analizar cual es el método de imputación de valores MAR óptimo tras dicha transformación. Para ello, se ejecutan las funciones `im_prepare_se` y `imputation_metrics` indicando el método de normalización utilizado. Tras la verificación manual, se ejecuta la funcion que devuelve las proteinas diferenciales.
+Tras la normalización según el método cycloess, se procede a analizar cual es el método de imputación de valores MAR óptimo tras dicha transformación. Para ello, se ejecutan las funciones `im_prepare_se` y `imputation_metrics` indicando el método de normalización utilizado. Tras la verificación manual, se ejecuta la función que devuelve las proteínas diferenciales.
 
 ```{r processing proteomics}
 #| results: hide
@@ -129,9 +129,8 @@ MTA_processed_data_cycloess_lastMNAR <- process_proteomics(
 
 ### PCA
 
-Mediante el análisis de los componentes principales, se evalua si las muestras se separan de manera correcta en funcion de las condiciones. Así, se puede visualizar que el primer componente principal separa en función de la hora de la toma de la muestra. El segudo componente separa las muestras en función de la cantidad de droga suministrada.
+Mediante el análisis de los componentes principales, se evalua si las muestras se separan de manera correcta en función de las condiciones. Así, se puede visualizar que el primer componente principal separa en función de la hora de la toma de la muestra. El segudo componente separa las muestras en función de la cantidad de droga suministrada.
 ```{r}
-#Builting scores for PCA graph #FIX porque tengo que hacer scores¿?
 scores_PCA_MTA_cycloess <- build_pca_scores(
                             MTA_processed_data_cycloess_lastMNAR$PCA_Input,
                             # To choose the one that i want
@@ -163,7 +162,7 @@ pca_MTA_cycloess #To visualize the PCA
 
 ### Mapa de calor
 
-Al generar el mapa de calor en funcion de los clusters que aparecen por naturaleza, podemos observar, al igual que en el PCA, si las proteinas de una misma condicion, siguen una misma tendencia.
+Al generar el mapa de calor en función de los clústers que aparecen por naturaleza, podemos observar, al igual que en el PCA, si las proteínas de una misma condicion, siguen una misma tendencia.
 
 ```{r}
 #| fig-width: 12
@@ -188,9 +187,9 @@ proteomics_heatmap(
 )
 ```
 
-### Obtención de proteinas diferenciales
+### Obtención de proteínas diferenciales
 
-Con el objetivo de visualizar la tendencia de los cambios en cada condición, se han generado los gráficos Volcano. Estos muestran la cantidad de proteinas que se muestras sobreexpresadas así como las infraexpresadas.
+Con el objetivo de visualizar la tendencia de los cambios en cada condición, se han generado los gráficos Volcano. Estos muestran la cantidad de proteínas que se muestras sobreexpresadas así como las infraexpresadas.
 
 #### Volcanos a 24h
 ```{r}
@@ -396,10 +395,10 @@ centroid_plot_any
 ```
 
 
-Hay un cluster de proteinas que de manera basal cuenta con poca abundancia. A medida que la concentracion de MTA aumenta, la abundancia tambien lo hace. Además, este mismo cluster, de manera basal tiene una abundancia mayor que a 24h y de la misma manera, cuando añades MTA, la abundancia de las proteinas de este cluster aumenta.
+Hay un clúster de proteínas que de manera basal cuenta con poca abundancia. A medida que la concentracion de MTA aumenta, la abundancia también lo hace. Además, este mismo clúster, de manera basal tiene una abundancia mayor que a 24h y de la misma manera, cuando añades MTA, la abundancia de las proteínas de este clúster aumenta.
 
-Esto indica que esas proteinas aumentan sin MTA ya que, a distintos tiempos, sin MTA, la abudancia es superior en el segundo tiempo. 
+Esto indica que esas proteínas aumentan sin MTA ya que, a distintos tiempos, sin MTA, la abudancia es superior en el segundo tiempo. 
 
-Por otro lado, hay un cluster con la tendencia contraria. 
+Por otro lado, hay un clúster con la tendencia contraria. 
 
-HAY QUE VER LAS FUNCIONES EN LAS QUE ESTÁN IMPLICADAS LAS PROTEINAS ESTAS
+HAY QUE VER LAS FUNCIONES EN LAS QUE ESTÁN IMPLICADAS LAS proteínaS ESTAS
